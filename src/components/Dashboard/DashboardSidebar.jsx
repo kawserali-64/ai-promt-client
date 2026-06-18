@@ -9,9 +9,11 @@ import { useSession } from "@/lib/auth-client";
 
 const DashboardSidebar = () => {
   const pathname = usePathname();
-  const { data: session } = useSession();
+  const { data: session,isPending } = useSession();
 
-  
+  if(isPending){
+    return <div>loding......</div>
+  }
   const currentRole = session?.user?.role?.toLowerCase() || "user";
 
   const dashboardItems = {

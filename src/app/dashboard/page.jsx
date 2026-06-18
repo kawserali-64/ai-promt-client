@@ -12,8 +12,10 @@ const DashboardHomePage = () => {
         return <div>Loading...</div>;
     } 
     if(user?.role === 'User') {
-        redirect('/dashboard/user/profile');
-    }else if(user?.role ==='Creator'){
+       redirect('/dashboard/user/profile');
+    }
+    
+    if(user?.role ==='Creator'){
         redirect('/dashboard/creator/my-prompt')
     }
     
