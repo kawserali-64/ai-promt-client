@@ -1,0 +1,87 @@
+"use client";
+import {
+  LayoutDashboard, PlusCircle, ListOrdered, Bookmark,
+  MessageSquare, User as UserIcon, LogOut, Home, Users, CreditCard, AlertTriangle
+} from "lucide-react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { useSession } from "@/lib/auth-client";
+
+const DashboardSidebar = () => {
+  const pathname = usePathname();
+  const { data: session } = useSession();
+
+  // সেশন থেকে রোল নিয়ে ছোট হাতের অক্ষরে কনভার্ট করা (নিরাপত্তার জন্য)
+  const currentRole = session?.user?.role?.toLowerCase() || "user";
+
+  const dashboardItems = {
+    User: [
+      { icon: UserIcon, label: "Profile", href: "/dashboard/user/profile" },
+      { icon: PlusCircle, label: "Add Prompt", href: "/dashboard/user/add-prompt" },
+      { icon: ListOrdered, label: "My Prompts", href: "/dashboard/user/my-prompts" },
+      { icon: Bookmark, label: "Saved Prompts", href: "/dashboard/user/saved-prompts" },
+      { icon: MessageSquare, label: "My Reviews", href: "/dashboard/user/my-reviews" },
+      
+    ],
+    Creator: [
+      { icon: LayoutDashboard, label: "Creator Dashboard Home", href: "/dashboard/creator-home" },
+      { icon: PlusCircle, label: "Add Prompt", href: "/dashboard/add-prompt" },
+      { icon: ListOrdered, label: "My Prompts", href: "/dashboard/my-prompts" },
+    ],
+    Admin: [
+      { icon: Home, label: "Admin Home", href: "/dashboard/admin-home" },
+      { icon: Users, label: "All Users", href: "/dashboard/all-users" },
+      { icon: ListOrdered, label: "All Prompts", href: "/dashboard/all-prompts" },
+      { icon: CreditCard, label: "All Payments", href: "/dashboard/all-payments" },
+      { icon: AlertTriangle, label: "Reported Prompts", href: "/dashboard/reported-prompts" },
+    ]
+  };
+
+  // আপনার অবজেক্টের কীগুলোর সাথে রোল ম্যাচ করানোর লজিক
+  let menuItems = dashboardItems.User; // ডিফল্ট ইউজার মেনু
+
+  if (currentRole === "creator") {
+    menuItems = dashboardItems.Creator;
+  } else if (currentRole === "admin") {
+    menuItems = dashboardItems.Admin;
+  }
+
+  return (
+    <div className="flex flex-col h-full bg-[#09090b] border-r border-white/5">
+      <div className="p-6">
+        <Link href="/" className="text-xl font-bold text-white flex items-center gap-2">
+          <span className="bg-gradient-to-tr from-violet-600 to-indigo-500 p-1.5 rounded-lg text-white">AI</span>
+          AIverse
+        </Link>
+      </div>
+
+      <div className="flex-1 px-3 py-2 space-y-1">
+        {menuItems.map((item) => {
+          const isActive = pathname === item.href;
+          return (
+            <Link
+              key={item.label}
+              href={item.href}
+              className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all ${
+                isActive
+                  ? "bg-violet-600/10 text-violet-400 border border-violet-500/20"
+                  : "text-zinc-400 hover:text-white hover:bg-white/5"
+              }`}
+            >
+              <item.icon className="size-5" />
+              {item.label}
+            </Link>
+          );
+        })}
+      </div>
+
+      <div className="p-4 border-t border-white/5">
+        <Link href="/" className="flex items-center gap-3 px-4 py-3 text-zinc-400 hover:text-white text-sm font-medium transition-colors">
+          <LogOut className="size-5 rotate-180" /> Back to Home
+        </Link>
+      </div>
+    </div>
+  );
+};
+
+export default DashboardSidebar;
