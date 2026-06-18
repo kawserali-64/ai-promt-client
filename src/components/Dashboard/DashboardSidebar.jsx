@@ -11,7 +11,7 @@ const DashboardSidebar = () => {
   const pathname = usePathname();
   const { data: session } = useSession();
 
-  // সেশন থেকে রোল নিয়ে ছোট হাতের অক্ষরে কনভার্ট করা (নিরাপত্তার জন্য)
+  
   const currentRole = session?.user?.role?.toLowerCase() || "user";
 
   const dashboardItems = {
@@ -24,9 +24,9 @@ const DashboardSidebar = () => {
       
     ],
     Creator: [
-      { icon: LayoutDashboard, label: "Creator Dashboard Home", href: "/dashboard/creator-home" },
-      { icon: PlusCircle, label: "Add Prompt", href: "/dashboard/add-prompt" },
-      { icon: ListOrdered, label: "My Prompts", href: "/dashboard/my-prompts" },
+      { icon: LayoutDashboard, label: "Creator Dashboard Home", href: "/dashboard/creator/creatorHome" },
+      { icon: PlusCircle, label: "Add Prompt", href: "/dashboard/creator/add-prompt" },
+      { icon: ListOrdered, label: "My Prompts", href: "/dashboard/creator/my-prompt" },
     ],
     Admin: [
       { icon: Home, label: "Admin Home", href: "/dashboard/admin-home" },

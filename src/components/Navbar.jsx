@@ -11,7 +11,6 @@ function NavbarPage() {
   const { data: session, isPending } = useSession();
   const user = session?.user;
   const router = useRouter();
-
   const handleNavbarLogout = async () => {
     try {
       await signOut({
@@ -68,7 +67,7 @@ function NavbarPage() {
               {/* ড্যাশবোর্ড লিঙ্ক (লগড ইন ইউজারদের জন্য) */}
               {user && (
                 <li>
-                  <Link href="/dashboard/profile" className="flex items-center gap-1.5 rounded-full px-4 py-1.5 text-sm font-medium text-zinc-400 hover:text-white transition-all hover:bg-white/5">
+                  <Link href="/dashboard" className="flex items-center gap-1.5 rounded-full px-4 py-1.5 text-sm font-medium text-zinc-400 hover:text-white transition-all hover:bg-white/5">
                     <LayoutDashboard className="h-4 w-4" /> Dashboard
                   </Link>
                 </li>
@@ -107,7 +106,7 @@ function NavbarPage() {
             <li><Link href="/" onClick={() => setIsMenuOpen(false)} className="flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-zinc-400 hover:bg-white/5 w-full"><Home className="h-4 w-4" /> Home</Link></li>
             <li><Link href="/all-prompts" onClick={() => setIsMenuOpen(false)} className="flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-zinc-400 hover:bg-white/5 w-full"><Compass className="h-4 w-4" /> All Prompts</Link></li>
             {user && (
-                <li><Link href="/dashboard/profile" onClick={() => setIsMenuOpen(false)} className="flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-zinc-400 hover:bg-white/5 w-full"><LayoutDashboard className="h-4 w-4" /> Dashboard</Link></li>
+                <li><Link href="/dashboard" onClick={() => setIsMenuOpen(false)} className="flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-zinc-400 hover:bg-white/5 w-full"><LayoutDashboard className="h-4 w-4" /> Dashboard</Link></li>
             )}
             
             <div className="mt-2 pt-2 border-t border-white/5">
