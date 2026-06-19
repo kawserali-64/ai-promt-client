@@ -60,7 +60,7 @@ function NavbarPage() {
                 </Link>
               </li>
               <li>
-                <Link href="/all-prompts" className="flex items-center gap-1.5 rounded-full px-4 py-1.5 text-sm font-medium text-zinc-400 hover:text-white transition-all hover:bg-white/5">
+                <Link href="/all-promt" className="flex items-center gap-1.5 rounded-full px-4 py-1.5 text-sm font-medium text-zinc-400 hover:text-white transition-all hover:bg-white/5">
                   <Compass className="h-4 w-4" /> All Prompts
                 </Link>
               </li>

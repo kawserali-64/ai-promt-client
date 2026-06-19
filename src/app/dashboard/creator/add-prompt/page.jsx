@@ -1,10 +1,16 @@
 "use client";
 
 import { useState } from "react";
-import { Input, TextArea, Button } from "@heroui/react";
+import { Input, Button, TextArea } from "@heroui/react";
 import { Sparkles, UploadCloud, WandSparkles } from "lucide-react";
+import { CreatePrompts } from "@/lib/actions/prompt";
+
+import { useRouter } from "next/navigation";
+import { useSession } from "@/lib/auth-client";
 
 const AddPromptCreator = () => {
+  const router = useRouter()
+      const { data: session } = useSession();
   const selectClass =
     "w-full h-12 px-4 rounded-xl bg-content1 border border-default-200 text-foreground shadow-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all appearance-none cursor-pointer";
 
@@ -21,13 +27,16 @@ const AddPromptCreator = () => {
   });
 
   const [file, setFile] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
     const requiredFields = [
       "title",
       "tags",
@@ -38,20 +47,54 @@ const AddPromptCreator = () => {
     ];
 
     for (let field of requiredFields) {
-      if (!form[field] || form[field].trim() === "") {
+      if (!form[field]?.trim()) {
         alert(`${field.toUpperCase()} is required!`);
         return;
       }
     }
 
-    console.log("FORM DATA:", form);
-    console.log("FILE:", file);
-    alert("Prompt Published!");
+    try {
+      setLoading(true);
+
+      const payload = {
+        ...form,
+        file,
+        userId: session?.user?.id,
+        
+      };
+      console.log(payload);
+
+      const res = await CreatePrompts(payload);
+      if (res?.insertedId) {
+        alert('prompt posted success')
+      }
+
+      // reset form
+      setForm({
+        title: "",
+        tags: "",
+        category: "",
+        tool: "ChatGPT",
+        difficulty: "Beginner",
+        visibility: "Public",
+        description: "",
+        instructions: "",
+        content: "",
+      });
+
+      setFile(null);
+      router.push("/dashboard/creator/my-prompt");
+      return;
+    } catch (error) {
+      console.error(error);
+      alert("Something went wrong!");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-content1 to-background p-6 flex justify-center">
-
       <div className="w-full max-w-5xl rounded-3xl border border-default-200 bg-content1 shadow-2xl overflow-hidden">
 
         {/* HEADER */}
@@ -61,19 +104,20 @@ const AddPromptCreator = () => {
             AI Prompt Marketplace
           </div>
 
-          <h1 className="text-4xl md:text-5xl font-black mt-4 leading-tight">
+          <h1 className="text-4xl md:text-5xl font-black mt-4">
             Create Your Next <span className="text-primary">AI Prompt</span>
           </h1>
 
-          <p className="text-default-500 mt-3 max-w-xl text-base md:text-lg">
+          <p className="text-default-500 mt-3">
             Share powerful prompts with creators around the world.
           </p>
         </div>
 
-        <div className="p-6 md:p-8 space-y-8">
+        {/* FORM */}
+        <form onSubmit={handleSubmit} className="p-6 md:p-8 space-y-8">
 
           {/* BASIC INFO */}
-          <div className="rounded-2xl border border-default-200 bg-content2 p-5 md:p-6 space-y-6">
+          <div className="rounded-2xl border border-default-200 bg-content2 p-6 space-y-6">
 
             <div className="grid md:grid-cols-2 gap-5">
               <Input
@@ -97,116 +141,88 @@ const AddPromptCreator = () => {
 
             <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
 
-              <div>
-                <label className="text-sm font-semibold mb-2 block">
-                  Category *
-                </label>
+              <select
+                name="category"
+                className={selectClass}
+                value={form.category}
+                onChange={handleChange}
+              >
+                <option value="">Select category *</option>
+                <option>Coding</option>
+                <option>Writing</option>
+                <option>Marketing</option>
+                <option>SEO</option>
+                <option>Business</option>
+                <option>Education</option>
+              </select>
 
-                <select
-                  name="category"
-                  className={selectClass}
-                  value={form.category}
-                  onChange={handleChange}
-                >
-                  <option value="">Select category</option>
-                  <option>Coding</option>
-                  <option>Writing</option>
-                  <option>Marketing</option>
-                  <option>SEO</option>
-                  <option>Business</option>
-                  <option>Education</option>
-                </select>
-              </div>
+              <select
+                name="tool"
+                className={selectClass}
+                value={form.tool}
+                onChange={handleChange}
+              >
+                <option>ChatGPT</option>
+                <option>Gemini</option>
+                <option>Claude</option>
+                <option>Midjourney</option>
+                <option>Copilot</option>
+              </select>
 
-              <div>
-                <label className="text-sm font-semibold mb-2 block">
-                  AI Tool
-                </label>
+              <select
+                name="difficulty"
+                className={selectClass}
+                value={form.difficulty}
+                onChange={handleChange}
+              >
+                <option>Beginner</option>
+                <option>Intermediate</option>
+                <option>Pro</option>
+              </select>
 
-                <select
-                  name="tool"
-                  className={selectClass}
-                  value={form.tool}
-                  onChange={handleChange}
-                >
-                  <option>ChatGPT</option>
-                  <option>Gemini</option>
-                  <option>Claude</option>
-                  <option>Midjourney</option>
-                  <option>Copilot</option>
-                </select>
-              </div>
+              <select
+                name="visibility"
+                className={selectClass}
+                value={form.visibility}
+                onChange={handleChange}
+              >
+                <option>Public</option>
+                <option>Private</option>
+              </select>
 
-              <div>
-                <label className="text-sm font-semibold mb-2 block">
-                  Difficulty
-                </label>
-
-                <select
-                  name="difficulty"
-                  className={selectClass}
-                  value={form.difficulty}
-                  onChange={handleChange}
-                >
-                  <option>Beginner</option>
-                  <option>Intermediate</option>
-                  <option>Pro</option>
-                </select>
-              </div>
-
-              <div>
-                <label className="text-sm font-semibold mb-2 block">
-                  Visibility
-                </label>
-
-                <select
-                  name="visibility"
-                  className={selectClass}
-                  value={form.visibility}
-                  onChange={handleChange}
-                >
-                  <option>Public</option>
-                  <option>Private</option>
-                </select>
-              </div>
             </div>
           </div>
 
           {/* DETAILS */}
-          <div className="rounded-2xl border border-default-200 bg-content2 p-5 md:p-6 space-y-5">
+          <div className="rounded-2xl border border-default-200 bg-content2 p-6 space-y-5">
 
-            <div className="grid md:grid-cols-2 gap-5">
+            <TextArea
+              label="Prompt Description *"
+              name="description"
+              value={form.description}
+              onChange={handleChange}
+              rows={4}
+              variant="bordered"
+            />
 
-              <TextArea
-                label="Prompt Description *"
-                name="description"
-                value={form.description}
-                onChange={handleChange}
-                placeholder="Short explanation..."
-                variant="bordered"
-                rows={5}
-              />
-
-              <TextArea
-                label="Usage Instructions *"
-                name="instructions"
-                value={form.instructions}
-                onChange={handleChange}
-                placeholder="How to use..."
-                variant="bordered"
-                rows={5}
-              />
-            </div>
+            <TextArea
+              label="Usage Instructions *"
+              name="instructions"
+              value={form.instructions}
+              onChange={handleChange}
+              rows={4}
+              variant="bordered"
+            />
 
             <TextArea
               label="Prompt Content *"
               name="content"
               value={form.content}
               onChange={handleChange}
-              placeholder="Write full AI prompt..."
+              rows={6}
               variant="bordered"
-              rows={8}
             />
+
           </div>
 
           {/* UPLOAD */}
@@ -216,32 +232,34 @@ const AddPromptCreator = () => {
 
               <UploadCloud size={40} className="text-primary mb-3" />
 
-              <h3 className="font-semibold text-base">Upload Thumbnail</h3>
+              <h3 className="font-semibold">Upload Thumbnail</h3>
 
-              <p className="text-default-500 text-sm mt-1">
+              <p className="text-default-500 text-sm">
                 PNG, JPG, JPEG, WEBP
               </p>
 
               <input
                 type="file"
-                className="hidden"
+                hidden
                 onChange={(e) => setFile(e.target.files[0])}
               />
             </label>
+
           </div>
 
           {/* SUBMIT */}
           <Button
+            type="submit"
             color="primary"
             size="lg"
+            disabled={loading}
             className="w-full h-14 text-lg font-bold rounded-2xl shadow-lg shadow-primary/25"
-            onClick={handleSubmit}
           >
             <WandSparkles className="mr-2 h-5 w-5" />
-            Publish Prompt
+            {loading ? "Publishing..." : "Publish Prompt"}
           </Button>
 
-        </div>
+        </form>
       </div>
     </div>
   );
