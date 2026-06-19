@@ -1,10 +1,11 @@
+import PromptFormPage from '@/components/Dashboard/prompt-form';
 
 const AddPromptPage = () => {
-    return (
-        <div>
-            <h1>Add Prompt</h1>
-        </div>
-    );
+  return (
+    <div>
+      <PromptFormPage />
+    </div>
+  );
 };
 
 export default AddPromptPage;

@@ -1,17 +1,11 @@
+import { serverFetch } from "../core/server";
+
 const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
 
-// export const getPrompt = async (id) => {
-//   const res = await fetch(`${baseUrl}/api/prompts/${id}`, {
-//     cache: "no-store",
-//   });
 
-//   if (!res.ok) {
-//     throw new Error("Failed to fetch prompt");
-//   }
-
-//   return res.json();
-// };
-
+export const getPrompt = async()=>{
+  return serverFetch('/api/prompts')
+}
 
 
 export const getMyPrompts = async (userId) => {
