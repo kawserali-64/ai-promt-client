@@ -1,24 +1,42 @@
 import { serverFetch } from "../core/server";
 
-const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
+// ======================
+// PROMPTS
+// ======================
+export const getPrompt = () => {
+  return serverFetch("/api/prompts");
+};
 
+export const getPromptById = (promptId) => {
+  return serverFetch(`/api/prompts/${promptId}`);
+};
 
-export const getPrompt = async () => {
-  return serverFetch('/api/prompts')
-}
+export const getMyPrompts = (userId) => {
+  return serverFetch(`/api/prompts?userId=${userId}`);
+};
 
-export const getPromptById = async (promptId) => {
-  return serverFetch(`/api/prompts/${promptId}`)
-}
+// ======================
+// REVIEWS
+// ======================
 
-export const getMyPrompts = async (userId) => {
-  const res = await fetch(`${baseUrl}/api/prompts?userId=${userId}`, {
-    cache: "no-store",
+// GET REVIEWS (promptId / userId যেকোনো একটার জন্য)
+export const getReviews = (query) => {
+  const params = new URLSearchParams(query).toString();
+  return serverFetch(`/api/review?${params}`);
+};
+
+// CREATE REVIEW
+export const createReview = ({ promptId, rating, comment, userId }) => {
+  return serverFetch("/api/review", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      promptId,
+      rating,
+      comment,
+      userId,
+    }),
   });
-
-  if (!res.ok) {
-    throw new Error("Failed to fetch prompts");
-  }
-
-  return res.json();
 };
