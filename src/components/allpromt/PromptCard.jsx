@@ -71,7 +71,7 @@ const PromptCard = ({ prompt }) => {
 
         </div>
 
-        <Link href={`/prompts/${prompt?._id}`}>
+        <Link href={`/all-promt/${prompt?._id}`}>
           <button className="mt-4 w-full py-2 rounded-lg bg-violet-600 hover:bg-violet-700 text-white text-sm font-medium">
             View Details
           </button>
