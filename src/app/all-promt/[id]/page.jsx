@@ -21,7 +21,7 @@ const PromptDetailsPage = async ({ params }) => {
       <div className="grid lg:grid-cols-3 gap-6">
 
         <div className="lg:col-span-2 space-y-6">
-          <PromptHeader prompt={prompt} />
+          <PromptHeader prompt={prompt} user={user} />
           <PromptContent prompt={prompt} />
           <ReviewList prompt={prompt} />
           <ReviewForm promptId={id} />
