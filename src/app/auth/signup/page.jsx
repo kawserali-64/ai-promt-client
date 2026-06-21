@@ -29,6 +29,7 @@ const SignupPage = () => {
       name,
       image,
       role,
+      plan:'Free',
       callbackURL: "/dashboard",
     });
 

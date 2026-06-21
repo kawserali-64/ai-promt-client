@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Input, Button, TextArea } from "@heroui/react";
+import { Input, Button, TextArea, } from "@heroui/react";
 import { Sparkles, UploadCloud, WandSparkles } from "lucide-react";
 import { CreatePrompts } from "@/lib/actions/prompt";
 import { useRouter } from "next/navigation";
@@ -37,19 +37,25 @@ const PromptFormPage = () => {
         setForm((prev) => ({ ...prev, [name]: value }));
     };
 
+    // ======================
     // IMAGE UPLOAD
+    // ======================
     const uploadImageToImgBB = async (file) => {
         try {
             setUploading(true);
 
-            if (!file) throw new Error("No file selected");
-            if (file.size > 5 * 1024 * 1024) throw new Error("Max 5MB allowed");
+            if (!file) return null;
+
+            if (file.size > 5 * 1024 * 1024) {
+                alert("Max 5MB allowed");
+                return null;
+            }
 
             const formData = new FormData();
             formData.append("image", file);
 
             const res = await fetch(
-                `https://api.imgbb.com/1/upload?key=${process.env.NEXT_PUBLIC_IMAG_UPLOAD_API}`,
+                `https://api.imgbb.com/1/upload?key=${process.env.NEXT_PUBLIC_IMGBB_API_KEY}`,
                 {
                     method: "POST",
                     body: formData,
@@ -58,20 +64,26 @@ const PromptFormPage = () => {
 
             const data = await res.json();
 
-            if (!data.success) throw new Error("Image upload failed");
+            if (!data?.success) {
+                alert("Image upload failed");
+                return null;
+            }
 
             const url = data.data.url;
             setImageUrl(url);
+
             return url;
-        } catch (error) {
-            alert(error.message || "Upload failed");
+        } catch (err) {
+            alert(err.message || "Upload failed");
             return null;
         } finally {
             setUploading(false);
         }
     };
 
+    // ======================
     // SUBMIT
+    // ======================
     const handleSubmit = async (e) => {
         e.preventDefault();
 
@@ -92,21 +104,34 @@ const PromptFormPage = () => {
 
             if (file) {
                 uploadedImage = await uploadImageToImgBB(file);
-                if (!uploadedImage) return;
+                if (!uploadedImage) {
+                    setLoading(false);
+                    return;
+                }
             }
 
+            // 🔥 FIXED: isPremium bug removed
             const payload = {
                 ...form,
                 image: uploadedImage,
-                userId: session?.user?.id,
-                role: session?.user?.role,
+                userId: session?.user?.id || "",
+                role: session?.user?.role || "user",
+                isPremium: session?.user?.isPremium || false,
             };
+
+            console.log("SESSION USER =>", session?.user);
+            console.log("PROMPT PAYLOAD =>", payload);
 
             const res = await CreatePrompts(payload);
 
-            if (res?.insertedId) {
-                alert("Prompt created successfully!");
+
+            if (!res?.success) {
+                alert(res?.message || "Failed to create prompt");
+                setLoading(false);
+                return;
             }
+
+            alert("Prompt created successfully!");
 
             setForm({
                 title: "",
@@ -125,6 +150,7 @@ const PromptFormPage = () => {
 
             router.push("/dashboard/creator/my-prompt");
         } catch (error) {
+            console.log(error);
             alert("Something went wrong!");
         } finally {
             setLoading(false);
@@ -133,7 +159,6 @@ const PromptFormPage = () => {
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-background via-content1 to-background p-6 flex justify-center">
-
             <div className="w-full max-w-5xl rounded-3xl border border-default-200 bg-content1 shadow-2xl overflow-hidden">
 
                 {/* HEADER */}
@@ -173,9 +198,8 @@ const PromptFormPage = () => {
                         />
                     </div>
 
-                    {/* CONFIG SECTION */}
+                    {/* CONFIG */}
                     <div className="rounded-2xl border border-default-200 bg-content2 p-6 space-y-6">
-
                         <div className="flex items-center gap-2">
                             <Sparkles className="text-primary" size={18} />
                             <h3 className="text-lg font-semibold">Prompt Configuration</h3>
@@ -211,90 +235,48 @@ const PromptFormPage = () => {
                                 <option>Public</option>
                                 <option>Private</option>
                             </select>
-
                         </div>
                     </div>
 
-                    {/* DETAILS SECTION (FIXED UX) */}
-                    {/* DETAILS SECTION (BALANCED UI) */}
+                    {/* DETAILS */}
                     <div className="rounded-2xl border border-default-200 bg-content2 p-6 space-y-6">
-
-                        {/* HEADER */}
                         <div className="flex items-center gap-2">
                             <WandSparkles className="text-primary" size={18} />
                             <h3 className="text-lg font-semibold">Prompt Details</h3>
                         </div>
 
-                        {/* GRID 3 EQUAL CARDS */}
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
 
-                            {/* DESCRIPTION */}
-                            <div className="flex flex-col gap-2">
-                                <label className="text-sm font-medium text-default-600">
-                                    📌 Description
-                                </label>
+                            <TextArea
+                                name="description"
+                                value={form.description}
+                                onChange={handleChange}
+                                rows={8}
+                                variant="bordered"
+                                placeholder="Description"
+                            />
 
-                                <TextArea
-                                    name="description"
-                                    value={form.description}
-                                    onChange={handleChange}
-                                    rows={10}
-                                    variant="bordered"
-                                    placeholder="What does this prompt do?"
-                                    className="h-full"
-                                />
+                            <TextArea
+                                name="instructions"
+                                value={form.instructions}
+                                onChange={handleChange}
+                                rows={8}
+                                variant="bordered"
+                                placeholder="Instructions"
+                            />
 
-                                <p className="text-xs text-default-400">
-                                    Explain purpose of this prompt
-                                </p>
-                            </div>
-
-                            {/* INSTRUCTIONS */}
-                            <div className="flex flex-col gap-2">
-                                <label className="text-sm font-medium text-default-600">
-                                    🧭 Instructions
-                                </label>
-
-                                <TextArea
-                                    name="instructions"
-                                    value={form.instructions}
-                                    onChange={handleChange}
-                                    rows={10}
-                                    variant="bordered"
-                                    placeholder="How to use this prompt?"
-                                    className="h-full"
-                                />
-
-                                <p className="text-xs text-default-400">
-                                    Step-by-step usage guide
-                                </p>
-                            </div>
-
-                            {/* CONTENT */}
-                            <div className="flex flex-col gap-2">
-                                <label className="text-sm font-medium text-default-600">
-                                    ✨ Prompt Content
-                                </label>
-
-                                <TextArea
-                                    name="content"
-                                    value={form.content}
-                                    onChange={handleChange}
-                                    rows={10}
-                                    variant="bordered"
-                                    placeholder="Write full AI prompt here..."
-                                    className="h-full"
-                                />
-
-                                <p className="text-xs text-default-400">
-                                    Main AI prompt text
-                                </p>
-                            </div>
-
+                            <TextArea
+                                name="content"
+                                value={form.content}
+                                onChange={handleChange}
+                                rows={8}
+                                variant="bordered"
+                                placeholder="Prompt Content"
+                            />
                         </div>
                     </div>
 
-                    {/* IMAGE UPLOAD */}
+                    {/* IMAGE */}
                     <div className="rounded-2xl border border-default-200 bg-content2 p-6">
 
                         <label className="flex flex-col items-center justify-center h-44 border-2 border-dashed border-primary/30 rounded-2xl cursor-pointer hover:bg-primary/5 transition">
@@ -309,7 +291,7 @@ const PromptFormPage = () => {
                                 type="file"
                                 hidden
                                 accept="image/*"
-                                onChange={(e) => setFile(e.target.files[0])}
+                                onChange={(e) => setFile(e.target.files?.[0])}
                             />
                         </label>
 
@@ -323,7 +305,6 @@ const PromptFormPage = () => {
                                 />
                             </div>
                         )}
-
                     </div>
 
                     {/* SUBMIT */}

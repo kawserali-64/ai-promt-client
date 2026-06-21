@@ -1,6 +1,8 @@
 import PromptCard from "@/components/allpromt/PromptCard";
 import { getPrompt } from "@/lib/api/prompt";
 
+
+
 const AllPromptPage = async ({ searchParams }) => {
 
   // SAFE: directly pass object as query builder in API layer

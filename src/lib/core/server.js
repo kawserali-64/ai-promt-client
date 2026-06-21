@@ -14,3 +14,4 @@ export const serverFetch = async (path, options = {}) => {
 
   return data;
 };
+

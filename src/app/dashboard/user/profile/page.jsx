@@ -34,7 +34,7 @@ const ProfilePage = () => {
 
   if (!session) return <div className="text-white text-center mt-20">Please login to view profile.</div>;
 
-  const isPremium = user?.subscription === "Premium"; 
+  const isPremium = user?.subscription === "Premium";
 
   return (
     <div className="max-w-4xl mx-auto space-y-6 px-4 sm:px-6 lg:px-0 py-2">

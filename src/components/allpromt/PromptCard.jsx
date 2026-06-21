@@ -3,14 +3,18 @@ import Link from "next/link";
 import { Star, Copy, Eye } from "lucide-react";
 
 const PromptCard = ({ prompt }) => {
+  const imageSrc = prompt?.image?.trim()
+    ? prompt.image
+    : "/placeholder.png"; // fallback image
+
   return (
     <div className="overflow-hidden rounded-2xl bg-[#111827] border border-[#1f2937] hover:border-violet-500 transition-all duration-300">
 
       {/* IMAGE */}
       <div className="relative h-40">
         <Image
-          src={prompt?.image}
-          alt={prompt?.title}
+          src={imageSrc}
+          alt={prompt?.title || "prompt"}
           fill
           className="object-cover"
         />
@@ -47,7 +51,7 @@ const PromptCard = ({ prompt }) => {
         <div className="mt-4 flex items-center justify-between text-xs text-gray-400">
 
           <span>
-            Prompt:{prompt.role}
+            Prompt: {prompt?.role}
           </span>
 
           <div className="flex items-center gap-3">

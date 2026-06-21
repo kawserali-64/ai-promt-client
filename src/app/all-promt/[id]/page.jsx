@@ -1,3 +1,4 @@
+
 import PromptContent from "@/components/allpromt/PromptContent";
 import PromptHeader from "@/components/allpromt/PromptHeader";
 import PromptSidebar from "@/components/allpromt/PromptSidebar";
@@ -6,6 +7,7 @@ import ReviewList from "@/components/allpromt/ReviewList";
 import { getPromptById } from "@/lib/api/prompt";
 import { getUserSession } from "@/lib/core/session";
 import { redirect } from "next/navigation";
+
 
 
 const PromptDetailsPage = async ({ params }) => {

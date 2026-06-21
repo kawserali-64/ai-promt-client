@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { Card, Button, Spinner } from "@heroui/react";
 import { getBookmarks, toggleBookmark } from "@/lib/api/prompt";
 import { useSession } from "@/lib/auth-client";
+import { toast } from "react-toastify";
 
 const SavedPromptsPage = () => {
   const router = useRouter();
@@ -16,16 +17,17 @@ const SavedPromptsPage = () => {
 
   const userId = session?.user?.id;
 
+  // ================= FETCH BOOKMARKS =================
   const fetchSaved = async () => {
     try {
+      setLoading(true);
+
       const res = await getBookmarks(userId);
 
-      console.log("Bookmarks Response:", res);
-
-      setData(Array.isArray(res) ? res : []);
+      setData(Array.isArray(res) ? res : res?.data || []);
     } catch (error) {
       console.log(error);
-      alert("Failed to load saved prompts");
+      toast.error("Failed to load saved prompts");
     } finally {
       setLoading(false);
     }
@@ -41,24 +43,34 @@ const SavedPromptsPage = () => {
     }
   }, [userId, isPending]);
 
-  const handleRemove = async (promptId) => {
-    try {
-      await toggleBookmark({
-        userId,
-        promptId,
-      });
+  // ================= REMOVE BOOKMARK (OPTIMISTIC UI) =================
+  const handleRemove = (promptId) => {
+    // backup (optional rollback)
+    const backup = data;
 
-      setData((prev) =>
-        prev.filter((item) => item.prompt?._id !== promptId)
-      );
+    // instant UI update
+    setData((prev) =>
+      prev.filter((item) => item.prompt?._id !== promptId)
+    );
 
-      alert("Removed from saved");
-    } catch (error) {
+    // instant toast
+    toast.success("Removed from saved prompts");
+
+    // background sync (no UI blocking)
+    toggleBookmark({
+      userId,
+      promptId,
+    }).catch((error) => {
       console.log(error);
-      alert("Failed to remove bookmark");
-    }
+
+      // rollback if failed
+      setData(backup);
+
+      toast.error("Failed to remove. Changes reverted.");
+    });
   };
 
+  // ================= LOADING =================
   if (isPending || loading) {
     return (
       <div className="flex justify-center items-center h-64">
@@ -68,35 +80,45 @@ const SavedPromptsPage = () => {
   }
 
   return (
-    <div className="p-6">
+    <div className="p-6 min-h-screen bg-gradient-to-br from-black via-[#0b0b1a] to-black text-white">
+
+      {/* HEADER */}
       <h1 className="text-3xl font-bold mb-6">
         Saved Prompts
       </h1>
 
+      {/* EMPTY STATE */}
       {data.length === 0 ? (
-        <div className="text-center py-10 text-gray-500">
-          <h2 className="text-xl font-semibold">
+        <div className="text-center py-16 text-zinc-400">
+          <h2 className="text-xl font-semibold text-white">
             No Saved Prompts
           </h2>
-          <p>Start bookmarking prompts to see them here.</p>
+          <p className="mt-2">
+            Start bookmarking prompts to see them here.
+          </p>
         </div>
       ) : (
         <div className="grid gap-4">
+
           {data.map((item) => (
-            <Card key={item._id} className="p-4">
-              <h2 className="text-xl font-semibold">
+            <Card
+              key={item._id}
+              className="p-5 bg-white/5 border border-white/10 backdrop-blur-xl"
+            >
+              <h2 className="text-xl font-semibold text-white">
                 {item.prompt?.title}
               </h2>
 
-              <p className="text-sm text-gray-500">
+              <p className="text-sm text-zinc-400 mt-1">
                 {item.prompt?.category} • {item.prompt?.tool}
               </p>
 
-              <p className="text-sm mt-1">
+              <p className="text-sm text-zinc-500 mt-1">
                 Copy Count: {item.prompt?.copyCount || 0}
               </p>
 
-              <div className="flex gap-2 mt-4">
+              <div className="flex gap-3 mt-5">
+
                 <Button
                   color="primary"
                   onClick={() =>
@@ -115,11 +137,14 @@ const SavedPromptsPage = () => {
                 >
                   Remove
                 </Button>
+
               </div>
             </Card>
           ))}
+
         </div>
       )}
+
     </div>
   );
 };
