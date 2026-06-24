@@ -119,7 +119,6 @@ const PromptFormPage = () => {
                 isPremium: session?.user?.plan === 'pro'
             };
 
-            console.log("SESSION USER =>", session?.user);
             console.log("PROMPT PAYLOAD =>", payload);
 
             const res = await CreatePrompts(payload);

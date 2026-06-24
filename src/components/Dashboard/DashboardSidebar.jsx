@@ -32,10 +32,10 @@ const DashboardSidebar = () => {
     ],
     Admin: [
       { icon: Home, label: "Admin Home", href: "/dashboard/admin" },
-      { icon: Users, label: "All Users", href: "/dashboard/all-users" },
-      { icon: ListOrdered, label: "All Prompts", href: "/dashboard/all-prompts" },
-      { icon: CreditCard, label: "All Payments", href: "/dashboard/all-payments" },
-      { icon: AlertTriangle, label: "Reported Prompts", href: "/dashboard/reported-prompts" },
+      { icon: Users, label: "All Users", href: "/dashboard/admin/all-user" },
+      { icon: ListOrdered, label: "All Prompts", href: "/dashboard/admin/all-prompt" },
+      { icon: CreditCard, label: "All Payments", href: "/dashboard/admin/all-payments" },
+      { icon: AlertTriangle, label: "Reported Prompts", href: "/dashboard/admin/report-prompt" },
     ]
   };
 
