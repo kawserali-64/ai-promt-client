@@ -31,7 +31,7 @@ const DashboardSidebar = () => {
       { icon: ListOrdered, label: "My Prompts", href: "/dashboard/creator/my-prompt" },
     ],
     Admin: [
-      { icon: Home, label: "Admin Home", href: "/dashboard/admin-home" },
+      { icon: Home, label: "Admin Home", href: "/dashboard/admin" },
       { icon: Users, label: "All Users", href: "/dashboard/all-users" },
       { icon: ListOrdered, label: "All Prompts", href: "/dashboard/all-prompts" },
       { icon: CreditCard, label: "All Payments", href: "/dashboard/all-payments" },
@@ -39,7 +39,6 @@ const DashboardSidebar = () => {
     ]
   };
 
-  // আপনার অবজেক্টের কীগুলোর সাথে রোল ম্যাচ করানোর লজিক
   let menuItems = dashboardItems.User; // ডিফল্ট ইউজার মেনু
 
   if (currentRole === "creator") {

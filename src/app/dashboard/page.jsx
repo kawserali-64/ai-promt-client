@@ -18,6 +18,10 @@ const DashboardHomePage = () => {
     if(user?.role ==='Creator'){
         redirect('/dashboard/creator/my-prompt')
     }
+
+    if(user?.role ==='Admin'){
+        redirect('/dashboard/admin')
+    }
     
     return (
         <div>
