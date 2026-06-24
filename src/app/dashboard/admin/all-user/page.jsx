@@ -159,9 +159,11 @@ const AllAdminUserPage = () => {
                                     <td className="px-6 py-4">
                                         <div className="flex items-center gap-4">
                                             {user?.image ? (
-                                                <img
+                                                <Image
                                                     src={user.image}
                                                     alt={user.name}
+                                                    width={60}
+                                                    height={60}
                                                     className="w-10 h-10 rounded-full object-cover border border-slate-700"
                                                 />
                                             ) : (

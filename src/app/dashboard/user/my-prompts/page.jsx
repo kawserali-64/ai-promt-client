@@ -120,31 +120,39 @@ const UserMyPromptPage = () => {
               prompts.map((item) => (
                 <tr key={item._id} className="border-t border-white/5 hover:bg-white/5">
 
-                  <td className="p-4">{item.title}</td>
+                  <td className="p-4">
+                    <div className="flex flex-col gap-1">
+                      <span>{item.title}</span>
+
+                      {item.status === "rejected" && item.rejectionFeedback && (
+                        <span className="text-xs text-red-400 bg-red-500/10 px-2 py-1 rounded-md">
+                          Feedback: {item.rejectionFeedback}
+                        </span>
+                      )}
+                    </div>
+                  </td>
                   <td className="p-4 text-zinc-300">{item.category}</td>
                   <td className="p-4 text-zinc-300">{item.tool}</td>
                   <td className="p-4 text-zinc-300">{item.difficulty}</td>
 
                   {/* VISIBILITY */}
                   <td className="p-4">
-                    <span className={`px-3 py-1 rounded-full text-xs font-semibold ${
-                      item.visibility === "Public"
-                        ? "bg-green-500/10 text-green-400"
-                        : "bg-red-500/10 text-red-400"
-                    }`}>
+                    <span className={`px-3 py-1 rounded-full text-xs font-semibold ${item.visibility === "Public"
+                      ? "bg-green-500/10 text-green-400"
+                      : "bg-red-500/10 text-red-400"
+                      }`}>
                       {item.visibility}
                     </span>
                   </td>
 
                   {/* STATUS (DOC REQUIRED) */}
                   <td className="p-4">
-                    <span className={`px-3 py-1 rounded-full text-xs font-semibold ${
-                      item.status === "approved"
-                        ? "bg-green-500/10 text-green-400"
-                        : item.status === "rejected"
+                    <span className={`px-3 py-1 rounded-full text-xs font-semibold ${item.status === "approved"
+                      ? "bg-green-500/10 text-green-400"
+                      : item.status === "rejected"
                         ? "bg-red-500/10 text-red-400"
                         : "bg-yellow-500/10 text-yellow-400"
-                    }`}>
+                      }`}>
                       {item.status || "pending"}
                     </span>
                   </td>
