@@ -20,6 +20,7 @@ function NavbarPage() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { data: session, isPending } = useSession();
   const user = session?.user;
+  console.log(user);
   const router = useRouter();
 
   const handleNavbarLogout = async () => {

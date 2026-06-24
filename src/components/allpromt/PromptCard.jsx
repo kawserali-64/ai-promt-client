@@ -5,7 +5,7 @@ import { Star, Copy, Eye } from "lucide-react";
 const PromptCard = ({ prompt }) => {
   const imageSrc = prompt?.image?.trim()
     ? prompt.image
-    : "/placeholder.png"; // fallback image
+    : "/placeholder.png";
 
   return (
     <div className="overflow-hidden rounded-2xl bg-[#111827] border border-[#1f2937] hover:border-violet-500 transition-all duration-300">
@@ -21,7 +21,8 @@ const PromptCard = ({ prompt }) => {
 
         <div className="absolute inset-0 bg-gradient-to-t from-[#111827] via-transparent to-transparent" />
 
-        <div className="absolute top-3 left-3 flex gap-2">
+        {/* LEFT BADGES */}
+        <div className="absolute top-3 left-3 flex gap-2 flex-wrap">
           <span className="px-2 py-1 text-[10px] rounded-full bg-amber-500 text-white">
             {prompt?.tool}
           </span>
@@ -30,11 +31,19 @@ const PromptCard = ({ prompt }) => {
             {prompt?.difficulty}
           </span>
         </div>
+
+        {/* PREMIUM BADGE */}
+        {prompt?.visibility === "Private" && (
+          <div className="absolute top-3 right-3">
+            <span className="px-3 py-1 rounded-full bg-gradient-to-r from-red-500 to-red-700 text-white text-[10px] font-bold shadow-lg">
+              👑 Premium
+            </span>
+          </div>
+        )}
       </div>
 
       {/* BODY */}
       <div className="p-4">
-
         <h3 className="text-white font-semibold text-base line-clamp-2">
           {prompt?.title}
         </h3>
@@ -47,15 +56,13 @@ const PromptCard = ({ prompt }) => {
           #{prompt?.category}
         </p>
 
-        {/* Footer */}
+        {/* FOOTER */}
         <div className="mt-4 flex items-center justify-between text-xs text-gray-400">
-
           <span>
             Prompt: {prompt?.role}
           </span>
 
           <div className="flex items-center gap-3">
-
             <div className="flex items-center gap-1">
               <Eye size={13} />
               <span>{prompt?.views || 0}</span>
@@ -68,19 +75,18 @@ const PromptCard = ({ prompt }) => {
 
             <div className="flex items-center gap-1">
               <Star size={13} />
-              <span>{prompt?.averageRating || 0}</span>
+              <span>
+                {Number(prompt?.averageRating || 0).toFixed(1)}
+              </span>
             </div>
-
           </div>
-
         </div>
 
         <Link href={`/all-promt/${prompt?._id}`}>
-          <button className="mt-4 w-full py-2 rounded-lg bg-violet-600 hover:bg-violet-700 text-white text-sm font-medium">
+          <button className="mt-4 w-full py-2 rounded-lg bg-violet-600 hover:bg-violet-700 text-white text-sm font-medium transition">
             View Details
           </button>
         </Link>
-
       </div>
     </div>
   );

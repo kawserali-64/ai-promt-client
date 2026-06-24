@@ -28,6 +28,7 @@ const ProfileSkeleton = () => (
 const ProfilePage = () => {
   const { data: session, isPending } = useSession(); // isPending চেক করা জরুরি
   const user = session?.user;
+  console.log(user);
   const router = useRouter();
 
   if (isPending) return <ProfileSkeleton />; // ডাটা আসার আগ পর্যন্ত Skeleton দেখাবে

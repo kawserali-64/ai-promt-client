@@ -5,16 +5,10 @@ import "react-toastify/dist/ReactToastify.css";
 const DashboardLayout = ({ children }) => {
     return (
         <div className="flex gap-4 min-h-screen">
-
-            {/* ================= SIDEBAR ================= */}
             <DashboardSidebar />
-
-            {/* ================= MAIN CONTENT ================= */}
             <div className="flex-1">
                 {children}
             </div>
-
-            {/* ================= TOAST (IMPORTANT) ================= */}
             <ToastContainer
                 position="top-right"
                 autoClose={2000}
@@ -25,7 +19,6 @@ const DashboardLayout = ({ children }) => {
                 draggable
                 theme="dark"
             />
-
         </div>
     );
 };

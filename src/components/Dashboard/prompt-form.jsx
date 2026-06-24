@@ -115,8 +115,8 @@ const PromptFormPage = () => {
                 ...form,
                 image: uploadedImage,
                 userId: session?.user?.id || "",
-                role: session?.user?.role || "user",
-                isPremium: session?.user?.isPremium || false,
+                role: session?.user?.role || "User",
+                isPremium: session?.user?.plan === 'pro'
             };
 
             console.log("SESSION USER =>", session?.user);
