@@ -31,7 +31,7 @@ const DashboardSidebar = () => {
       { icon: ListOrdered, label: "My Prompts", href: "/dashboard/creator/my-prompt" },
     ],
     Admin: [
-      { icon: Home, label: "Admin Home", href: "/dashboard/admin" },
+      { icon: Home, label: "Admin Analytics", href: "/dashboard/admin" },
       { icon: Users, label: "All Users", href: "/dashboard/admin/all-user" },
       { icon: ListOrdered, label: "All Prompts", href: "/dashboard/admin/all-prompt" },
       { icon: CreditCard, label: "All Payments", href: "/dashboard/admin/all-payments" },

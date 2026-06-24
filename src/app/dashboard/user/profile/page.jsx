@@ -26,12 +26,12 @@ const ProfileSkeleton = () => (
 );
 
 const ProfilePage = () => {
-  const { data: session, isPending } = useSession(); // isPending চেক করা জরুরি
+  const { data: session, isPending } = useSession(); 
   const user = session?.user;
   console.log(user);
   const router = useRouter();
 
-  if (isPending) return <ProfileSkeleton />; // ডাটা আসার আগ পর্যন্ত Skeleton দেখাবে
+  if (isPending) return <ProfileSkeleton />;
 
   if (!session) return <div className="text-white text-center mt-20">Please login to view profile.</div>;
 
@@ -70,7 +70,7 @@ const ProfilePage = () => {
               <span className={`text-[10px] font-bold tracking-wider px-3 py-1 rounded-full uppercase border ${
                 isPremium ? "bg-amber-500/10 text-amber-400 border-amber-500/20" : "bg-zinc-800/50 text-zinc-400 border-white/5"
               }`}>
-                PLAN: {isPremium ? "Premium" : "Free"}
+                PLAN: {user.plan || "free"}
               </span>
             </div>
           </div>

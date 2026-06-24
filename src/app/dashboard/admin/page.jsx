@@ -2,7 +2,7 @@
 const AdminHomePage = () => {
     return (
         <div>
-            <h2>admin home</h2>
+            <h2>admin Analytics</h2>
         </div>
     );
 };
