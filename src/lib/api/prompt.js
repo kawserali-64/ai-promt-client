@@ -1,12 +1,25 @@
 import { serverFetch } from "../core/server";
 
-// =====================
 // PROMPTS
-// =====================
 
-export const getPrompt = () => {
-  return serverFetch("/api/prompts");
+export const getPrompt = (params = {}) => {
+
+  const cleanParams = Object.fromEntries(
+    Object.entries(params || {}).filter(
+      ([_, value]) =>
+        value !== undefined &&
+        value !== null &&
+        value !== ""
+    )
+  );
+
+  const query = new URLSearchParams(cleanParams).toString();
+
+  return serverFetch(
+    `/api/prompts${query ? `?${query}` : ""}`
+  );
 };
+
 
 export const getPromptById = (promptId) => {
   return serverFetch(`/api/prompts/${promptId}`);

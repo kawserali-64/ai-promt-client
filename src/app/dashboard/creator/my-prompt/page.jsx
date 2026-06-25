@@ -114,9 +114,21 @@ const MyPromptPage = () => {
                   className="border-t border-white/5 hover:bg-white/5 transition"
                 >
 
-                  <td className="p-4 font-medium text-white">
-                    {item.title}
+                  <td className="p-4">
+                    <div className="flex flex-col gap-1">
+                      <span className="font-medium text-white">
+                        {item.title}
+                      </span>
+
+                      {item.status === "rejected" &&
+                        item.rejectionFeedback && (
+                          <span className="text-xs text-red-400 bg-red-500/10 border border-red-500/20 px-2 py-1 rounded-md w-fit">
+                            Rejected Reason: {item.rejectionFeedback}
+                          </span>
+                        )}
+                    </div>
                   </td>
+
 
                   <td className="p-4 text-slate-300">{item.category}</td>
                   <td className="p-4 text-slate-300">{item.tool}</td>
@@ -124,24 +136,22 @@ const MyPromptPage = () => {
 
                   {/* VISIBILITY */}
                   <td className="p-4">
-                    <span className={`px-3 py-1 rounded-full text-xs font-medium border ${
-                      item.visibility === "Public"
+                    <span className={`px-3 py-1 rounded-full text-xs font-medium border ${item.visibility === "Public"
                         ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20"
                         : "bg-rose-500/10 text-rose-400 border-rose-500/20"
-                    }`}>
+                      }`}>
                       {item.visibility}
                     </span>
                   </td>
 
                   {/* STATUS */}
                   <td className="p-4">
-                    <span className={`px-3 py-1 rounded-full text-xs font-medium border ${
-                      item.status === "approved"
+                    <span className={`px-3 py-1 rounded-full text-xs font-medium border ${item.status === "approved"
                         ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20"
                         : item.status === "rejected"
-                        ? "bg-red-500/10 text-red-400 border-red-500/20"
-                        : "bg-amber-500/10 text-amber-400 border-amber-500/20"
-                    }`}>
+                          ? "bg-red-500/10 text-red-400 border-red-500/20"
+                          : "bg-amber-500/10 text-amber-400 border-amber-500/20"
+                      }`}>
                       {item.status || "pending"}
                     </span>
                   </td>

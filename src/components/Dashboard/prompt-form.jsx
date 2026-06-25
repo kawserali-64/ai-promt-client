@@ -29,6 +29,17 @@ const PromptFormPage = () => {
     const [loading, setLoading] = useState(false);
     const [uploading, setUploading] = useState(false);
 
+    const tagOptions = [
+        "SEO",
+        "Marketing",
+        "Writing",
+        "Coding",
+        "Business",
+        "Education",
+        "AI",
+        "Prompt Engineering",
+    ];
+
     const selectClass =
         "w-full h-12 px-4 rounded-xl bg-content1 border border-default-200 text-foreground shadow-sm focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all appearance-none cursor-pointer";
 
@@ -188,13 +199,20 @@ const PromptFormPage = () => {
                             variant="bordered"
                         />
 
-                        <Input
-                            label="Tags *"
+                        <select
                             name="tags"
                             value={form.tags}
                             onChange={handleChange}
-                            variant="bordered"
-                        />
+                            className={selectClass}
+                        >
+                            <option value="">Select Tag *</option>
+
+                            {tagOptions.map((tag) => (
+                                <option key={tag} value={tag}>
+                                    {tag}
+                                </option>
+                            ))}
+                        </select>
                     </div>
 
                     {/* CONFIG */}
