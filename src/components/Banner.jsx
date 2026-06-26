@@ -1,10 +1,14 @@
 "use client";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { Button } from "@heroui/react";
 import { motion } from "framer-motion";
 import { Search, Sparkles, ArrowRight, Code2, Terminal, Cpu } from "lucide-react";
+import Link from "next/link";
 
-function HeroBanner({ onSearch }) {
+function HeroBanner() {
+  const router = useRouter();
+
   const [searchQuery, setSearchQuery] = useState("");
 
   const trendingTags = [
@@ -18,13 +22,27 @@ function HeroBanner({ onSearch }) {
 
   const handleSearchSubmit = (e) => {
     e.preventDefault();
-    if (onSearch) onSearch(searchQuery);
+
+    const query = searchQuery.trim();
+
+    if (!query) {
+      router.push("/all-promt");
+      return;
+    }
+
+    router.push(
+      `/all-promt?search=${encodeURIComponent(query)}`
+    );
   };
 
   const handleTagClick = (tag) => {
     const cleanTag = tag.replace("#", "");
+
     setSearchQuery(cleanTag);
-    if (onSearch) onSearch(cleanTag);
+
+    router.push(
+      `/all-promt?search=${encodeURIComponent(cleanTag)}`
+    );
   };
 
   // Framer Motion এন্ট্রান্স অ্যানিমেশন
@@ -47,7 +65,7 @@ function HeroBanner({ onSearch }) {
 
   return (
     <section className="relative flex min-h-[90vh] w-full items-center justify-center overflow-hidden bg-[#09090b] px-4 py-20 sm:px-6 lg:px-8">
-      
+
       {/* 🌌 ব্যাকগ্রাউন্ড আর্কিটেকচার (সাইড গ্লো এবং ফাইন গ্রিড) */}
       <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff02_1px,transparent_1px),linear-gradient(to_bottom,#ffffff02_1px,transparent_1px)] bg-[size:40px_40px] [mask-image:radial-gradient(ellipse_at_top_right,black_30%,transparent_80%)]"></div>
       <div className="absolute -top-20 -right-20 h-[600px] w-[600px] rounded-full bg-indigo-600/10 blur-[140px]"></div>
@@ -55,16 +73,16 @@ function HeroBanner({ onSearch }) {
 
       <div className="mx-auto max-w-7xl w-full z-10">
         {/* ডেসকটপে ২-কলামের সিনেমাটিক স্প্লিট লেআউট */}
-        <motion.div 
+        <motion.div
           initial="hidden"
           animate="visible"
           variants={containerVariants}
           className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center"
         >
-          
+
           {/* ================= বাম কলাম: টেক্সট, কাস্টম সার্চ ও ট্যাগস ================= */}
           <div className="lg:col-span-7 flex flex-col justify-center text-left">
-            
+
             {/* প্রিমিয়াম আল্ট্রা-ব্যাজ */}
             <motion.div variants={itemVariants} className="mb-5 flex">
               <div className="inline-flex items-center gap-1.5 rounded-xl border border-violet-500/20 bg-violet-500/5 px-3 py-1 text-xs font-semibold text-violet-400 backdrop-blur-md shadow-[0_0_15px_rgba(124,58,237,0.05)]">
@@ -74,7 +92,7 @@ function HeroBanner({ onSearch }) {
             </motion.div>
 
             {/* হেডিং (স্ক্রিনশটের মতো এক লাইনে না রেখে বোল্ড এসমেট্রিক লুক) */}
-            <motion.h1 
+            <motion.h1
               variants={itemVariants}
               className="text-4xl font-extrabold tracking-tight text-white sm:text-5xl md:text-6xl/none font-black"
             >
@@ -85,7 +103,7 @@ function HeroBanner({ onSearch }) {
             </motion.h1>
 
             {/* ডেসক্রিপশন */}
-            <motion.p 
+            <motion.p
               variants={itemVariants}
               className="mt-6 max-w-xl text-base leading-relaxed text-zinc-400"
             >
@@ -93,7 +111,7 @@ function HeroBanner({ onSearch }) {
             </motion.p>
 
             {/* কাস্টম ডিজাইনড গ্লোয়িং সার্চ বার */}
-            <motion.form 
+            <motion.form
               variants={itemVariants}
               onSubmit={handleSearchSubmit}
               className="mt-8 max-w-xl"
@@ -120,7 +138,7 @@ function HeroBanner({ onSearch }) {
             </motion.form>
 
             {/* ট্রেন্ডিং ট্যাগস (মিনিমালিস্টিক পিল শেপ) */}
-            <motion.div 
+            <motion.div
               variants={itemVariants}
               className="mt-5 flex flex-wrap gap-2 max-w-xl"
             >
@@ -136,17 +154,17 @@ function HeroBanner({ onSearch }) {
             </motion.div>
 
             {/* কল-টু-অ্যাকশন বাটন্স */}
-            <motion.div 
+            <motion.div
               variants={itemVariants}
               className="mt-8 flex flex-col sm:flex-row items-center gap-4"
             >
-              <Button
-                href="/all-prompts"
+              <Link
+                href="/all-promt"
                 className="group flex w-full sm:w-auto items-center justify-center gap-2 rounded-xl bg-white px-6 py-6 text-sm font-bold text-black transition-all hover:bg-zinc-200"
               >
                 Explore All Prompts
                 <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
-              </Button>
+              </Link>
 
               <Button
                 href="/dashboard"
@@ -159,7 +177,7 @@ function HeroBanner({ onSearch }) {
           </div>
 
           {/* ================= ডান কলাম: সিনেমাটিক গ্লোয়িং কোড/কার্ড প্রিভিউ ================= */}
-          <motion.div 
+          <motion.div
             variants={itemVariants}
             className="lg:col-span-5 relative hidden lg:flex justify-center items-center"
           >
@@ -167,7 +185,7 @@ function HeroBanner({ onSearch }) {
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-72 w-72 rounded-full bg-violet-500/20 blur-[100px]"></div>
 
             {/* ফ্লোটিং আর্কিটেকচার মেকার কার্ড */}
-            <motion.div 
+            <motion.div
               variants={cardFloating}
               animate="animate"
               className="w-full max-w-[380px] rounded-2xl border border-white/10 bg-[#0e0e12]/90 p-5 shadow-[0_20px_50px_rgba(0,0,0,0.8)] backdrop-blur-xl"

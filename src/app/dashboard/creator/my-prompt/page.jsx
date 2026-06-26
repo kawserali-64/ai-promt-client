@@ -24,9 +24,21 @@ const MyPromptPage = () => {
       if (!session?.user?.id) return;
 
       try {
-        const data = await getMyPrompts(session.user.id);
-        setPrompts(Array.isArray(data) ? data : data?.data || []);
-      } catch {
+        const res = await getMyPrompts(session.user.id);
+
+        console.log(res);
+
+        setPrompts(
+          Array.isArray(res)
+            ? res
+            : Array.isArray(res?.prompts)
+              ? res.prompts
+              : Array.isArray(res?.data)
+                ? res.data
+                : []
+        );
+      } catch (err) {
+        console.error(err);
         toast.error("Failed to load prompts");
       }
     };
@@ -137,8 +149,8 @@ const MyPromptPage = () => {
                   {/* VISIBILITY */}
                   <td className="p-4">
                     <span className={`px-3 py-1 rounded-full text-xs font-medium border ${item.visibility === "Public"
-                        ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20"
-                        : "bg-rose-500/10 text-rose-400 border-rose-500/20"
+                      ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20"
+                      : "bg-rose-500/10 text-rose-400 border-rose-500/20"
                       }`}>
                       {item.visibility}
                     </span>
@@ -147,10 +159,10 @@ const MyPromptPage = () => {
                   {/* STATUS */}
                   <td className="p-4">
                     <span className={`px-3 py-1 rounded-full text-xs font-medium border ${item.status === "approved"
-                        ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20"
-                        : item.status === "rejected"
-                          ? "bg-red-500/10 text-red-400 border-red-500/20"
-                          : "bg-amber-500/10 text-amber-400 border-amber-500/20"
+                      ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20"
+                      : item.status === "rejected"
+                        ? "bg-red-500/10 text-red-400 border-red-500/20"
+                        : "bg-amber-500/10 text-amber-400 border-amber-500/20"
                       }`}>
                       {item.status || "pending"}
                     </span>

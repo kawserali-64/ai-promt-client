@@ -5,9 +5,9 @@ import { useSession } from "@/lib/auth-client";
 import { toast } from "react-toastify";
 
 import {
+  deletePrompt,
   getMyPrompts,
   updatePrompt,
-  deletePrompt,
 } from "@/lib/api/prompt";
 
 import { Pencil, Trash2, X } from "lucide-react";
@@ -25,16 +25,29 @@ const UserMyPromptPage = () => {
   const [deleteId, setDeleteId] = useState(null);
 
   // ================= FETCH =================
+  // ================= FETCH =================
   useEffect(() => {
-    const fetchData = async () => {
-      if (!session?.user?.id) return;
+    if (!session?.user?.id) return;
 
+    const fetchData = async () => {
       try {
         setLoading(true);
+
         const data = await getMyPrompts(session.user.id);
 
-        setPrompts(Array.isArray(data) ? data : data?.data || []);
-      } catch {
+        console.log("My Prompts Response:", data);
+
+        if (Array.isArray(data)) {
+          setPrompts(data);
+        } else if (Array.isArray(data?.prompts)) {
+          setPrompts(data.prompts);
+        } else if (Array.isArray(data?.data)) {
+          setPrompts(data.data);
+        } else {
+          setPrompts([]);
+        }
+      } catch (error) {
+        console.log(error);
         toast.error("Failed to load prompts");
       } finally {
         setLoading(false);
@@ -42,7 +55,7 @@ const UserMyPromptPage = () => {
     };
 
     fetchData();
-  }, [session]);
+  }, [session?.user?.id]);
 
   // ================= UPDATE =================
   const handleUpdate = async () => {

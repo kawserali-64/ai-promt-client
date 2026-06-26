@@ -1,4 +1,5 @@
 import PromptCard from "@/components/allpromt/PromptCard";
+import SearchFilter from "@/components/allpromt/SearchFilter";
 import { getPrompt } from "@/lib/api/prompt";
 import Link from "next/link";
 
@@ -47,6 +48,7 @@ const AllPromptPage = async ({ searchParams }) => {
 
   return (
     <div className="p-6 bg-[#0a0a0a] min-h-screen text-white">
+      <SearchFilter />
 
       <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6 gap-4">
 
