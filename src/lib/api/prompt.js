@@ -20,6 +20,24 @@ export const getPrompt = (params = {}) => {
   );
 };
 
+// featured function
+export const getFeaturedPrompts = async () => {
+  const res = await fetch(
+    `${process.env.NEXT_PUBLIC_BASE_URL}/api/prompts/featured`,
+    {
+      next: {
+        revalidate: 60,
+      },
+    }
+  );
+
+  if (!res.ok) {
+    throw new Error("Failed to fetch featured prompts");
+  }
+
+  return res.json();
+};
+
 
 export const getPromptById = (promptId) => {
   return serverFetch(`/api/prompts/${promptId}`);
@@ -29,9 +47,6 @@ export const getMyPrompts = (userId) => {
   return serverFetch(`/api/prompts?userId=${userId}`);
 };
 
-// =====================
-// CREATE / UPDATE / DELETE (NEW ADDED)
-// =====================
 
 // UPDATE PROMPT
 export const updatePrompt = (promptId, data) => {
