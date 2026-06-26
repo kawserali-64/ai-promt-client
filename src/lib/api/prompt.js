@@ -38,6 +38,27 @@ export const getFeaturedPrompts = async () => {
   return res.json();
 };
 
+// top creator
+export const getTopCreators = async () => {
+  const res = await fetch(
+    `${process.env.NEXT_PUBLIC_BASE_URL}/api/top-creators`
+  );
+
+  if (!res.ok) throw new Error("Failed to fetch creators");
+
+  return res.json();
+};
+
+// Trending prompt
+export const getTrendingPrompts = async () => {
+  const res = await fetch(
+    `${process.env.NEXT_PUBLIC_BASE_URL}/api/prompts/trending`
+  );
+
+  if (!res.ok) throw new Error("Failed to fetch trending prompts");
+
+  return res.json();
+};
 
 export const getPromptById = (promptId) => {
   return serverFetch(`/api/prompts/${promptId}`);
