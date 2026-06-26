@@ -9,18 +9,27 @@ export const auth = betterAuth({
     emailAndPassword: {
         enabled: true,
     },
+    socialProviders: {
+        google: {
+            clientId: process.env.GOOGLE_CLIENT_ID,
+            clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+        },
+    },
     database: mongodbAdapter(db, {
-        // Optional: if you don't provide a client, database transactions won't be enabled.
         client
     }),
-    user:{
+    user: {
         additionalFields: {
             role: {
-                type: String,
+                type: "string",
                 default: "user",
-                input:true,
+                input: true,
             },
-            plan: 'free'
-        }
-    }
+            plan: {
+                type: "string",
+                default: "free",
+                input: true,
+            },
+        },
+    },
 });

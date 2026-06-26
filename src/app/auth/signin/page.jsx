@@ -34,6 +34,12 @@ const SigninPage = () => {
     }
   };
 
+  const handleGoogleSignin = async () => {
+    const data = await authClient.signIn.social({
+      provider: "google",
+    });
+  }
+
 
   return (
     <div className="relative flex min-h-screen w-full items-center justify-center overflow-hidden bg-[#09090b] px-4 py-12">
@@ -123,6 +129,7 @@ const SigninPage = () => {
         {/* GOOGLE BUTTON UI ONLY */}
 
         <Button
+          onClick={handleGoogleSignin}
           variant="bordered"
           className="w-full h-12 border-default-200 hover:bg-default-100 flex items-center justify-center gap-2"
         >

@@ -7,19 +7,50 @@ import { getTrendingPrompts } from "@/lib/api/prompt";
 
 export default function TrendingPrompts() {
   const [prompts, setPrompts] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
+        setLoading(true);
         const data = await getTrendingPrompts();
         setPrompts(data?.prompts || []);
       } catch (err) {
         console.error(err);
+      } finally {
+        setLoading(false);
       }
     };
 
     fetchData();
   }, []);
+
+  // 🔥 LOADING STATE (SKELETON)
+  if (loading) {
+    return (
+      <section className="py-24 bg-[#09090b] text-white">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {[1, 2, 3, 4, 5, 6].map((i) => (
+              <div
+                key={i}
+                className="h-40 bg-zinc-800 animate-pulse rounded-2xl"
+              />
+            ))}
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  // 🔥 EMPTY STATE
+  if (!loading && prompts.length === 0) {
+    return (
+      <section className="py-24 bg-[#09090b] text-center text-zinc-400">
+        No trending prompts found 🔥
+      </section>
+    );
+  }
 
   return (
     <section className="py-24 bg-[#09090b] text-white">
@@ -67,7 +98,8 @@ export default function TrendingPrompts() {
                 {/* TOP BADGE */}
                 {isTop && (
                   <div className="absolute -top-3 -right-3 bg-orange-500 text-black px-3 py-1 rounded-full text-xs font-bold flex items-center gap-1">
-                    <TrendingUp size={14} /> Trending #1
+                    <TrendingUp size={14} />
+                    Trending #1
                   </div>
                 )}
 
