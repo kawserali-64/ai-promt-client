@@ -21,7 +21,7 @@ const CreatorHomePage = () => {
                 setLoading(true);
 
                 const res = await fetch(
-                    `http://localhost:5000/api/creator/analytics?userId=${userId}`
+                    `${process.env.NEXT_PUBLIC_BASE_URL}/api/creator/analytics?userId=${userId}`
                 );
 
                 const result = await res.json();

@@ -48,9 +48,7 @@ const PromptFormPage = () => {
         setForm((prev) => ({ ...prev, [name]: value }));
     };
 
-    // ======================
     // IMAGE UPLOAD
-    // ======================
     const uploadImageToImgBB = async (file) => {
         try {
             setUploading(true);
@@ -130,8 +128,6 @@ const PromptFormPage = () => {
                 isPremium: session?.user?.plan === 'pro'
             };
 
-            console.log("PROMPT PAYLOAD =>", payload);
-
             const res = await CreatePrompts(payload);
 
 
@@ -158,7 +154,13 @@ const PromptFormPage = () => {
             setFile(null);
             setImageUrl("");
 
-            router.push("/dashboard/creator/my-prompt");
+            const role = session?.user?.role;
+
+            if (role === "Creator") {
+                router.push("/dashboard/creator/my-prompt");
+            } else {
+                router.push("/dashboard/user/my-prompts");
+            }
         } catch (error) {
             console.log(error);
             alert("Something went wrong!");

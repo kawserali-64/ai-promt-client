@@ -253,8 +253,16 @@ const AllAdminPromptPage = () => {
                                             </span>
                                         </td>
 
-                                        <td className="px-6 py-4 text-sm text-slate-400">
-                                            Public
+                                        <td className="px-6 py-4">
+                                            <span
+                                                className={`inline-flex items-center rounded-full border px-3 py-1 text-[10px] font-bold uppercase ${(prompt.visibility || "public") === "private"
+                                                        ? "border-red-500/20 bg-red-900/20 text-red-400"
+                                                        : "border-emerald-500/20 bg-emerald-900/20 text-emerald-400"
+                                                    }`}
+                                            >
+                                                {(prompt.visibility || "public").charAt(0).toUpperCase() +
+                                                    (prompt.visibility || "public").slice(1)}
+                                            </span>
                                         </td>
 
                                         <td className="px-6 py-4">
@@ -269,10 +277,10 @@ const AllAdminPromptPage = () => {
                                         <td className="px-6 py-4">
                                             <span
                                                 className={`text-[10px] font-bold px-3 py-1 rounded-full border uppercase ${prompt.status === "approved"
-                                                        ? "bg-emerald-900/20 text-emerald-500 border-emerald-500/20"
-                                                        : prompt.status === "rejected"
-                                                            ? "bg-red-900/20 text-red-500 border-red-500/20"
-                                                            : "bg-amber-900/20 text-amber-500 border-amber-500/20"
+                                                    ? "bg-emerald-900/20 text-emerald-500 border-emerald-500/20"
+                                                    : prompt.status === "rejected"
+                                                        ? "bg-red-900/20 text-red-500 border-red-500/20"
+                                                        : "bg-amber-900/20 text-amber-500 border-amber-500/20"
                                                     }`}
                                             >
                                                 {prompt.status}

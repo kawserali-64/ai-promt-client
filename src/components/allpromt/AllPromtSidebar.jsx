@@ -21,7 +21,6 @@ export function AllPromtSidebar() {
   const tags = ["SEO", "Marketing", "Writing", "Coding", "Business", "Education", "AI", "Prompt Engineering"];
   const difficulties = ["Beginner", "Intermediate", "Pro"];
 
-  // ✅ CLEAN LINK BUILDER (IMPORTANT FIX)
   const createLink = (key, value) => {
     const params = new URLSearchParams(searchParams.toString());
 
