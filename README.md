@@ -1,36 +1,90 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# 🚀 AI Prompt Marketplace
 
-## Getting Started
+A professional platform to create, discover, and manage AI prompts efficiently.
 
-First, run the development server:
+---
+
+## 📖 About The Project
+
+**AI Prompt Marketplace** is a modern, community-driven ecosystem built for AI enthusiasts.  
+Whether you use ChatGPT, Midjourney, or Claude, this platform provides a seamless space to publish prompts, explore trending tools, and collaborate with other creators.
+
+Built with performance, scalability, and security in mind, this marketplace enables secure prompt exchange, management, and monetization.
+
+---
+
+## 🔗 Live Demo
+
+- 🌐 Live Website: https://ai-promt-client.vercel.app/
+- 💻 Client Repo: https://github.com/kawserali-64/ai-promt-client
+- 🖥 Server Repo: https://github.com/kawserali-64/ai-prompt-server
+
+---
+
+## 🛠 Tech Stack
+
+### Frontend
+- React.js (Vite)
+- Tailwind CSS
+- Framer Motion
+- Recharts
+- React Toastify
+- Axios
+- Stripe.js
+
+### Backend
+- Node.js
+- Express.js
+- MongoDB
+- JWT Authentication
+- CORS
+
+---
+
+## ✨ Key Features
+
+- 🔐 Secure Authentication (JWT + Google Login)
+- 👥 Role-Based Access (User / Creator / Admin)
+- 🔍 Advanced Marketplace (Search, Filter, Sort)
+- 💳 Monetization with Stripe Payments
+- 📊 Dynamic Analytics Dashboard (Recharts)
+- 📌 Prompt Tools (Bookmark, Copy, Report, Review)
+- 🛡 Admin Panel (User & Prompt Management)
+
+---
+
+## 📦 Packages Used
+
+### Frontend
+- framer-motion  
+- react-router-dom  
+- react-hook-form  
+- recharts  
+- stripe/stripe-js  
+- axios  
+- react-toastify  
+
+### Backend
+- express  
+- mongoose  
+- jsonwebtoken  
+- cors  
+- dotenv  
+
+---
+
+## 🚀 Getting Started
 
 ```bash
+# Clone repo
+git clone https://github.com/kawserali-64/ai-promt-client.git
+
+# Install frontend
+cd client
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+# Install backend
+cd server
+npm install
+npm start
