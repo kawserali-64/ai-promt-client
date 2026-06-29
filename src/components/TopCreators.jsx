@@ -1,8 +1,6 @@
 "use client";
 
 import { motion } from "framer-motion";
-import Image from "next/image";
-import { Trophy, Zap, Star } from "lucide-react";
 import { useEffect, useState } from "react";
 import { getTopCreators } from "@/lib/api/prompt";
 
@@ -11,121 +9,56 @@ export default function TopCreators() {
 
   useEffect(() => {
     const fetchData = async () => {
-      try {
-        const data = await getTopCreators();
-        setCreators(data?.creators || []);
-      } catch (err) {
-        console.error(err);
-      }
+      const data = await getTopCreators();
+      setCreators(data?.creators || []);
     };
-
     fetchData();
   }, []);
 
   return (
-    <section className="py-24 bg-[#09090b] text-white">
-      <div className="max-w-7xl mx-auto px-6">
-
-        {/* HEADER */}
-        <div className="text-center mb-14">
-          <h2 className="text-4xl font-bold">
-            🏆 Top Creators
-          </h2>
-          <p className="text-zinc-400 mt-2">
-            Meet the most active AI prompt creators in our community
-          </p>
+    <section className="py-32 bg-[#050505] text-white">
+      <div className="max-w-5xl mx-auto px-6">
+        
+        {/* Header - Minimalist & Punchy */}
+        <div className="mb-24">
+          <p className="text-violet-500 font-mono text-sm mb-4">04 // LEADERSHIP_BOARD</p>
+          <h2 className="text-7xl font-black tracking-tighter italic">TOP ARCHITECTS</h2>
         </div>
 
-        {/* GRID */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        {/* Content - Cinematic Vertical Rows */}
+        <div className="space-y-2">
+          {creators.map((creator, index) => (
+            <motion.div
+              key={creator._id}
+              initial={{ opacity: 0, x: -50 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.7, delay: index * 0.1, ease: "circOut" }}
+              className="group relative flex items-center justify-between py-10 border-b border-white/10 hover:border-violet-500 transition-colors duration-500"
+            >
+              {/* Index Number */}
+              <div className="text-8xl font-black text-white/5 group-hover:text-violet-500/20 transition-colors absolute left-0 select-none">
+                0{index + 1}
+              </div>
 
-          {creators.map((creator, index) => {
-            const isTop = index === 0;
-            const isVerified = creator.role === "creator";
+              {/* Creator Info */}
+              <div className="relative z-10 ml-10">
+                <h3 className="text-3xl font-bold tracking-tight">{creator.name}</h3>
+                <p className="text-zinc-500 font-mono mt-1">Verified Architect // {creator.role}</p>
+              </div>
 
-            return (
-              <motion.div
-                key={creator._id}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.4, delay: index * 0.1 }}
-                viewport={{ once: true }}
-                className={`relative p-6 rounded-2xl border transition
-                ${
-                  isTop
-                    ? "border-yellow-400 bg-yellow-400/10 shadow-lg shadow-yellow-500/20"
-                    : "border-zinc-800 bg-zinc-900 hover:bg-zinc-800"
-                }`}
-              >
-
-                {/* RANK BADGE */}
-                {isTop && (
-                  <div className="absolute -top-3 -right-3 bg-yellow-400 text-black px-3 py-1 rounded-full text-xs font-bold flex items-center gap-1">
-                    <Trophy size={14} /> #1 Creator
-                  </div>
-                )}
-
-                {/* PROFILE */}
-                <div className="flex items-center gap-4 mb-5">
-                  <Image
-                    src={creator.photo || "/avatar.png"}
-                    alt="creator"
-                    width={55}
-                    height={55}
-                    className="rounded-full border border-zinc-700"
-                  />
-
-                  <div>
-                    <h3 className="text-lg font-semibold flex items-center gap-2">
-                      {creator.name}
-
-                      {isVerified && (
-                        <Star size={16} className="text-blue-400" />
-                      )}
-                    </h3>
-
-                    <p className="text-xs text-zinc-400">
-                      AI Prompt Creator
-                    </p>
-                  </div>
+              {/* Stats */}
+              <div className="relative z-10 flex items-center gap-12 font-mono text-lg">
+                <div className="text-right">
+                  <span className="block text-[10px] text-zinc-600 uppercase tracking-widest">Prompts</span>
+                  {creator.totalPrompts}
                 </div>
-
-                {/* STATS */}
-                <div className="space-y-2 text-sm">
-                  <div className="flex justify-between">
-                    <span className="text-zinc-400">Prompts</span>
-                    <span className="font-semibold">
-                      {creator.totalPrompts}
-                    </span>
-                  </div>
-
-                  <div className="flex justify-between">
-                    <span className="text-zinc-400 flex items-center gap-1">
-                      <Zap size={14} /> Copies
-                    </span>
-                    <span className="font-semibold text-green-400">
-                      {creator.totalCopies}
-                    </span>
-                  </div>
+                <div className="text-right w-24">
+                  <span className="block text-[10px] text-zinc-600 uppercase tracking-widest">Copies</span>
+                  <span className="text-violet-400">{creator.totalCopies}</span>
                 </div>
-
-                {/* BADGE */}
-                <div className="mt-5 flex gap-2 flex-wrap">
-                  {creator.totalCopies > 500 && (
-                    <span className="text-xs bg-green-500/10 text-green-400 px-2 py-1 rounded-full">
-                      🔥 Top Performer
-                    </span>
-                  )}
-
-                  {isVerified && (
-                    <span className="text-xs bg-blue-500/10 text-blue-400 px-2 py-1 rounded-full">
-                      ⭐ Verified Creator
-                    </span>
-                  )}
-                </div>
-              </motion.div>
-            );
-          })}
+              </div>
+            </motion.div>
+          ))}
         </div>
       </div>
     </section>

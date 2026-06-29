@@ -1,6 +1,4 @@
 import DashboardSidebar from "@/components/Dashboard/DashboardSidebar";
-import { ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 
 const DashboardLayout = ({ children }) => {
     return (
@@ -9,16 +7,7 @@ const DashboardLayout = ({ children }) => {
             <div className="flex-1">
                 {children}
             </div>
-            <ToastContainer
-                position="top-right"
-                autoClose={2000}
-                hideProgressBar={false}
-                newestOnTop={false}
-                closeOnClick
-                pauseOnHover
-                draggable
-                theme="dark"
-            />
+        
         </div>
     );
 };

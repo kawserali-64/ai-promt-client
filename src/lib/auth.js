@@ -22,12 +22,12 @@ export const auth = betterAuth({
         additionalFields: {
             role: {
                 type: "string",
-                default: "user",
+                defaultValue: "user",
                 input: true,
             },
             plan: {
                 type: "string",
-                default: "free",
+                defaultValue: "free",
                 input: true,
             },
         },

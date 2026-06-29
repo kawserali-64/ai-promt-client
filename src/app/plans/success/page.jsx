@@ -1,9 +1,9 @@
 import { stripe } from '@/lib/stripe'
 import { redirect } from 'next/navigation'
 import { CheckCircle2, Mail, ArrowRight } from 'lucide-react'
-import Link from 'next/link'
 import { getUserSession } from '@/lib/core/session'
 import { subscription } from '@/lib/api/coustomer'
+import BackButton from './button/BackButton'
 
 export default async function Success({ searchParams }) {
 
@@ -66,13 +66,7 @@ export default async function Success({ searchParams }) {
           We’ve sent a confirmation email with your payment details.
         </p>
 
-        <Link
-          href={`/dashboard/${user?.role}`}
-          className="mt-6 inline-flex items-center justify-center gap-2 w-full rounded-lg bg-emerald-600 py-2.5 text-white font-medium hover:bg-emerald-700 transition"
-        >
-          Go to Dashboard
-          <ArrowRight className="w-4 h-4" />
-        </Link>
+       <BackButton />
 
       </div>
     </div>

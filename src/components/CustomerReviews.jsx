@@ -2,13 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import {
-  Star,
-  Quote,
-  Bot,
-  CalendarDays,
-  Mail,
-} from "lucide-react";
+import { Star, Quote, Bot, CalendarDays, Mail } from "lucide-react";
 import { format } from "date-fns";
 import { getCustomerReviews } from "@/lib/api/prompt";
 
@@ -27,25 +21,15 @@ const CustomerReviews = () => {
         setLoading(false);
       }
     };
-
     loadReviews();
   }, []);
 
   if (loading) {
     return (
-      <section className="max-w-7xl mx-auto px-5 py-20">
-        <div className="text-center mb-12">
-          <h2 className="text-4xl font-bold">
-            Customer Reviews
-          </h2>
-        </div>
-
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+      <section className="bg-[#050505] py-24 px-5">
+        <div className="max-w-7xl mx-auto grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {[...Array(6)].map((_, i) => (
-            <div
-              key={i}
-              className="h-72 rounded-3xl bg-base-200 animate-pulse"
-            />
+            <div key={i} className="h-80 rounded-3xl bg-zinc-900 animate-pulse border border-zinc-800" />
           ))}
         </div>
       </section>
@@ -53,140 +37,73 @@ const CustomerReviews = () => {
   }
 
   return (
-    <section className="max-w-7xl mx-auto px-5 py-24">
+    <section className="relative bg-[#050505] py-24 px-5 overflow-hidden">
+      {/* ব্যাকগ্রাউন্ড গ্লো */}
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-violet-900/10 via-[#050505] to-[#050505]"></div>
 
-      <div className="text-center max-w-2xl mx-auto mb-14">
+      <div className="max-w-7xl mx-auto relative z-10">
+        <div className="text-center max-w-2xl mx-auto mb-20">
+          <h2 className="text-5xl font-black text-white tracking-tight mb-6">
+            Community <span className="text-transparent bg-clip-text bg-gradient-to-r from-violet-400 to-indigo-400">Feedback</span>
+          </h2>
+          <p className="text-zinc-500 font-medium">Trusted by thousands of prompt engineers and creators globally.</p>
+        </div>
 
-        <span className="badge badge-primary badge-outline mb-4">
-          Testimonials
-        </span>
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          {reviews.map((review, index) => (
+            <motion.div
+              key={review._id}
+              initial={{ opacity: 0, scale: 0.95 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true }}
+              className="relative p-8 rounded-3xl bg-[#0a0a0c] border border-zinc-800 hover:border-violet-500/50 transition-all duration-500 group"
+            >
+              <div className="absolute -top-3 -right-3 opacity-0 group-hover:opacity-100 transition-opacity">
+                <Quote size={40} className="text-violet-500/20" />
+              </div>
 
-        <h2 className="text-4xl md:text-5xl font-bold">
-          What Our Users Say
-        </h2>
-
-        <p className="mt-4 text-base-content/70">
-          Discover what creators and AI enthusiasts think about the prompts
-          shared on our marketplace.
-        </p>
-      </div>
-
-      <div className="grid gap-7 md:grid-cols-2 lg:grid-cols-3">
-
-        {reviews.map((review, index) => (
-
-          <motion.div
-            key={review._id}
-            initial={{ opacity: 0, y: 40 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{
-              duration: 0.45,
-              delay: index * 0.08,
-            }}
-            viewport={{ once: true }}
-            whileHover={{
-              y: -8,
-            }}
-            className="rounded-3xl border border-base-300 bg-base-100 shadow-xl p-7 transition-all duration-300"
-          >
-
-            <div className="flex items-center justify-between mb-6">
-
-              <div className="flex items-center gap-4">
-
-                <img
-                  src={review.userPhoto}
-                  alt={review.userName}
-                  className="w-16 h-16 rounded-full object-cover ring ring-primary ring-offset-2"
-                />
-
-                <div>
-
-                  <h3 className="font-bold text-lg">
-                    {review.userName}
-                  </h3>
-
-                  <div className="flex items-center gap-1 text-sm opacity-70">
-
-                    <Mail size={14} />
-
-                    {review.userEmail}
-
-                  </div>
-
+              {/* ইউজার সেকশন */}
+              <div className="flex items-center gap-4 mb-6">
+                <div className="relative">
+                  <img src={review.userPhoto} alt={review.userName} className="w-14 h-14 rounded-full object-cover border-2 border-zinc-800" />
+                  <div className="absolute -bottom-1 -right-1 bg-green-500 w-4 h-4 rounded-full border-2 border-[#0a0a0c]"></div>
                 </div>
-
+                <div>
+                  <h3 className="font-bold text-white text-base">{review.userName}</h3>
+                  <p className="text-xs text-zinc-600 flex items-center gap-1"><Mail size={10} /> {review.userEmail}</p>
+                </div>
               </div>
 
-              <Quote
-                size={30}
-                className="text-primary opacity-30"
-              />
-
-            </div>
-
-            <div className="flex items-center gap-1 mb-5">
-
-              {[1, 2, 3, 4, 5].map((star) => (
-
-                <Star
-                  key={star}
-                  size={18}
-                  className={
-                    star <= review.rating
-                      ? "fill-yellow-400 text-yellow-400"
-                      : "text-gray-300"
-                  }
-                />
-
-              ))}
-
-            </div>
-
-            <div className="flex flex-wrap gap-2 mb-5">
-
-              <span className="badge badge-primary gap-1">
-
-                <Bot size={14} />
-
-                {review.aiTool}
-
-              </span>
-
-              <span className="badge badge-outline">
-
-                {review.promptTitle}
-
-              </span>
-
-            </div>
-
-            <p className="text-base-content/80 leading-7 line-clamp-5 min-h-[120px] italic">
-              "{review.comment}"
-            </p>
-
-            <div className="mt-6 pt-5 border-t border-base-300 flex items-center justify-between text-sm opacity-70">
-
-              <div className="flex items-center gap-2">
-
-                <CalendarDays size={15} />
-
-                {format(new Date(review.createdAt), "MMM dd, yyyy")}
-
+              {/* রেটিং */}
+              <div className="flex gap-0.5 mb-5">
+                {[1, 2, 3, 4, 5].map((star) => (
+                  <Star key={star} size={14} className={star <= review.rating ? "fill-amber-400 text-amber-400" : "text-zinc-800"} />
+                ))}
               </div>
 
-              <span className="font-semibold">
-                {review.rating}.0 / 5
-              </span>
+              {/* মন্তব্য */}
+              <p className="text-zinc-400 text-sm leading-relaxed mb-6 italic">
+                "{review.comment}"
+              </p>
 
-            </div>
+              {/* ট্যাগ ও ফুটার */}
+              <div className="flex flex-wrap gap-2 mb-6">
+                <span className="text-[10px] uppercase tracking-wider px-3 py-1 rounded-md bg-zinc-900 text-violet-400 font-bold border border-zinc-800">
+                  {review.aiTool}
+                </span>
+                <span className="text-[10px] uppercase tracking-wider px-3 py-1 rounded-md bg-zinc-900 text-zinc-500 font-bold border border-zinc-800">
+                  {review.promptTitle}
+                </span>
+              </div>
 
-          </motion.div>
-
-        ))}
-
+              <div className="pt-4 border-t border-zinc-800 flex justify-between items-center text-[10px] font-bold text-zinc-600 uppercase">
+                <span className="flex items-center gap-1.5"><CalendarDays size={12} /> {format(new Date(review.createdAt), "MMM dd, yyyy")}</span>
+                <span className="text-zinc-400">{review.rating}.0 Rating</span>
+              </div>
+            </motion.div>
+          ))}
+        </div>
       </div>
-
     </section>
   );
 };

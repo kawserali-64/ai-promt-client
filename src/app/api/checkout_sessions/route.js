@@ -23,7 +23,9 @@ export async function POST() {
             mode: 'subscription',
             success_url: `${origin}/plans/success?session_id={CHECKOUT_SESSION_ID}`,
         });
+        console.log(session.url);
         return NextResponse.redirect(session.url, 303)
+    
     } catch (err) {
         return NextResponse.json(
             { error: err.message },

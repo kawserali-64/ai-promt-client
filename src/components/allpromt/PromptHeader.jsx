@@ -1,182 +1,100 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Card, Button } from "@heroui/react";
-import { Bookmark, Flag } from "lucide-react";
+import { Button } from "@heroui/react";
+import { Bookmark, Flag, X, AlertCircle } from "lucide-react";
 import { toggleBookmark } from "@/lib/api/prompt";
+import { toast } from "react-toastify";
 
 const PromptHeader = ({ prompt, user }) => {
   const [isSaved, setIsSaved] = useState(false);
   const [loading, setLoading] = useState(false);
-
-  // REPORT STATES
   const [isReportOpen, setIsReportOpen] = useState(false);
   const [reason, setReason] = useState("");
   const [message, setMessage] = useState("");
 
   useEffect(() => {
-    if (prompt?.isBookmarked) {
-      setIsSaved(true);
-    }
+    if (prompt?.isBookmarked) setIsSaved(true);
   }, [prompt]);
 
-  // ================= BOOKMARK =================
   const handleBookmark = async () => {
+    const userId = user?.id || user?._id || user?.user?.id;
+    if (!userId) return toast.error("Please login first");
+
+    setLoading(true);
     try {
-      const userId = user?.id || user?._id || user?.user?.id;
-
-      if (!userId) {
-        alert("Please login first");
-        return;
-      }
-
-      setLoading(true);
-
-      const res = await toggleBookmark({
-        userId,
-        promptId: prompt._id,
-      });
-
-      if (res.saved) {
-        setIsSaved(true);
-        alert("Saved to bookmarks");
-      } else {
-        setIsSaved(false);
-        alert("Removed from bookmarks");
-      }
-    } catch (error) {
-      console.log(error);
-      alert("Something went wrong");
+      const res = await toggleBookmark({ userId, promptId: prompt._id });
+      setIsSaved(res.saved);
+      toast.success(res.saved ? "Added to your library" : "Removed from library");
+    } catch {
+      toast.error("Something went wrong");
     } finally {
       setLoading(false);
     }
   };
 
-  // ================= REPORT =================
   const handleReport = async () => {
+    if (!reason) return toast.error("Please select a reason");
+    
     try {
-      const userId = user?.id || user?._id || user?.user?.id;
-
-      if (!userId) {
-        alert("Please login first");
-        return;
-      }
-
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/api/prompts/${prompt._id}/report`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            userId,
-            reason,
-            message,
-          }),
-        }
-      );
-
-      const data = await res.json();
-
-      if (data.success) {
-        alert("Reported successfully");
+      const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/prompts/${prompt._id}/report`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userId: user?.id, reason, message }),
+      });
+      if ((await res.json()).success) {
+        toast.success("Reported successfully");
         setIsReportOpen(false);
-        setReason("");
-        setMessage("");
-      } else {
-        alert("Report failed");
       }
-    } catch (error) {
-      console.log(error);
-      alert("Something went wrong");
-    }
+    } catch { toast.error("Report failed"); }
   };
 
   return (
     <>
-      <Card className="p-6">
-        <div className="flex justify-between">
-          <div>
-            <h1 className="text-4xl font-bold">{prompt.title}</h1>
-
-            <p className="mt-3 text-default-500">
-              {prompt.description}
-            </p>
-          </div>
-
-          <div className="flex gap-2">
-
-            {/* BOOKMARK */}
-            <Button
-              isIconOnly
-              variant={isSaved ? "solid" : "flat"}
-              onClick={handleBookmark}
-              disabled={loading}
-            >
-              <Bookmark
-                size={18}
-                fill={isSaved ? "currentColor" : "none"}
-              />
-            </Button>
-
-            {/* REPORT BUTTON */}
-            <Button
-              isIconOnly
-              variant="flat"
-              onClick={() => setIsReportOpen(true)}
-            >
-              <Flag size={18} />
-            </Button>
-
-          </div>
+      <div className="flex flex-col md:flex-row justify-between items-start gap-6">
+        <div>
+          <h1 className="text-3xl md:text-4xl font-black tracking-tight text-white">{prompt.title}</h1>
+          <p className="mt-4 text-zinc-400 leading-relaxed max-w-2xl">{prompt.description}</p>
         </div>
-      </Card>
 
-      {/* ================= REPORT MODAL ================= */}
+        <div className="flex gap-2 shrink-0">
+          <Button
+            isIconOnly
+            variant="flat"
+            className={`${isSaved ? "bg-violet-500/20 text-violet-400" : "bg-white/5 hover:bg-white/10"}`}
+            onClick={handleBookmark}
+            isLoading={loading}
+          >
+            <Bookmark size={20} fill={isSaved ? "currentColor" : "none"} />
+          </Button>
+
+          <Button isIconOnly variant="flat" className="bg-white/5 hover:bg-red-500/10 hover:text-red-500" onClick={() => setIsReportOpen(true)}>
+            <Flag size={20} />
+          </Button>
+        </div>
+      </div>
+
+      {/* Report Modal */}
       {isReportOpen && (
-        <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50">
+        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-[100] flex items-center justify-center p-4">
+          <div className="w-full max-w-sm bg-[#0a0a0a] border border-white/10 p-8 rounded-[32px] relative">
+            <button onClick={() => setIsReportOpen(false)} className="absolute top-6 right-6 text-zinc-500 hover:text-white"><X size={20}/></button>
+            
+            <div className="flex items-center gap-3 mb-6">
+              <AlertCircle className="text-red-500" />
+              <h2 className="text-xl font-bold">Report Prompt</h2>
+            </div>
 
-          <div className="w-[400px] bg-[#0f0f1a] border border-white/10 p-6 rounded-xl">
-
-            <h2 className="text-xl font-bold mb-4">
-              Report Prompt
-            </h2>
-
-            {/* REASON */}
-            <select
-              className="w-full p-2 bg-white/5 border border-white/10 rounded"
-              onChange={(e) => setReason(e.target.value)}
-            >
-              <option value="">Select Reason</option>
+            <select className="w-full p-4 bg-[#111] border border-white/5 rounded-xl mb-3 text-sm" onChange={(e) => setReason(e.target.value)}>
+              <option value="">Select a reason</option>
               <option value="Spam">Spam</option>
               <option value="Inappropriate Content">Inappropriate Content</option>
               <option value="Copyright Violation">Copyright Violation</option>
             </select>
 
-            {/* MESSAGE */}
-            <textarea
-              className="w-full mt-3 p-2 bg-white/5 border border-white/10 rounded"
-              placeholder="Optional message"
-              onChange={(e) => setMessage(e.target.value)}
-            />
+            <textarea className="w-full p-4 bg-[#111] border border-white/5 rounded-xl mb-6 text-sm min-h-[100px]" placeholder="Additional details..." onChange={(e) => setMessage(e.target.value)} />
 
-            <div className="flex justify-end gap-2 mt-4">
-
-              <button
-                onClick={() => setIsReportOpen(false)}
-                className="px-3 py-1 bg-white/10 rounded"
-              >
-                Cancel
-              </button>
-
-              <button
-                onClick={handleReport}
-                className="px-3 py-1 bg-red-600 rounded"
-              >
-                Submit
-              </button>
-
-            </div>
-
+            <Button className="w-full bg-white text-black font-bold h-12 rounded-xl" onClick={handleReport}>Submit Report</Button>
           </div>
         </div>
       )}

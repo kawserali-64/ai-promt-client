@@ -1,16 +1,14 @@
 "use client";
 import { useState } from "react";
-// import { Radio } from "lucide-react";
 import { Button, Description, FieldError, Form, Input, Label, Radio, RadioGroup, TextField } from "@heroui/react";
 import { authClient } from "@/lib/auth-client";
+import { FcGoogle } from "react-icons/fc";
 
 const SignupPage = () => {
   const [loading, setLoading] = useState(false);
-  const [googleLoading, setGoogleLoading] = useState(false);
   const [serverError, setServerError] = useState(null);
   const [selection, setSelection] = useState("User");
 
-  // ইমেইল ও পাসওয়ার্ড দিয়ে সাইন-আপ
   const onSubmit = async (e) => {
     e.preventDefault();
     setServerError(null);
@@ -29,7 +27,7 @@ const SignupPage = () => {
       name,
       image,
       role,
-      plan:'free',
+      plan: 'free',
       callbackURL: "/dashboard",
     });
 
@@ -38,24 +36,16 @@ const SignupPage = () => {
     if (error) {
       setServerError(error.message || "Something went wrong. Please try again.");
     }
+    // signup successful
+    window.location.href="/"
+    
   };
 
-  // গুগল সাইন-আপ
-  const handleGoogleSignup = async () => {
-
-    try {
-      setServerError(null);
-      setGoogleLoading(true);
-      await authClient.signIn.social({
-        provider: "google",
-        callbackURL: "/dashboard",
-      });
-    } catch (error) {
-      setServerError("Google authentication failed. Please try again.");
-      setGoogleLoading(false);
-    }
-  };
-
+  const handleGoogleSignin = async () => {
+    const data = await authClient.signIn.social({
+      provider: "google",
+    });
+  }
   return (
     <div className="relative flex min-h-screen w-full items-center justify-center overflow-hidden bg-[#09090b] px-4 py-12">
       <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff01_1px,transparent_1px),linear-gradient(to_bottom,#ffffff01_1px,transparent_1px)] bg-[size:32px_32px] [mask-image:radial-gradient(ellipse_at_center,transparent_20%,black_100%)]"></div>
@@ -75,32 +65,28 @@ const SignupPage = () => {
         )}
 
         <Form className="flex flex-col gap-4" onSubmit={onSubmit}>
-          {/* নাম ইনপুট */}
           <TextField isRequired name="name" type="text">
             <Label className="text-zinc-300 font-medium text-xs mb-1">Full Name</Label>
             <Input placeholder="John Doe" className="rounded-xl border border-white/5 bg-zinc-900/50 text-white" />
           </TextField>
 
-          {/* প্রোফাইল ছবি ইনপুট */}
           <TextField isRequired name="image" type="url">
             <Label className="text-zinc-300 font-medium text-xs mb-1">Profile Image URL</Label>
             <Input placeholder="Enter image URL" className="rounded-xl border border-white/5 bg-zinc-900/50 text-white" />
           </TextField>
 
-          {/* ইমেইল ইনপুট */}
           <TextField isRequired name="email" type="email">
             <Label className="text-zinc-300 font-medium text-xs mb-1">Email Address</Label>
             <Input placeholder="john@example.com" className="rounded-xl border border-white/5 bg-zinc-900/50 text-white" />
             <FieldError className="text-xs text-red-400 mt-1" />
           </TextField>
 
-          {/* পাসওয়ার্ড ইনপুট */}
           <TextField isRequired name="password" type="password">
             <Label className="text-zinc-300 font-medium text-xs mb-1">Password</Label>
             <Input placeholder="••••••••" className="rounded-xl border border-white/5 bg-zinc-900/50 text-white" />
             <Description className="text-[10px] text-zinc-500 mt-1">Must be at least 8 characters.</Description>
           </TextField>
-          {/* role */}
+          
           <div className="flex flex-col gap-4">
             <RadioGroup
               defaultValue="User"
@@ -137,8 +123,13 @@ const SignupPage = () => {
           <span className="relative bg-[#0e0e12] px-3 text-[10px] uppercase tracking-widest text-zinc-500">Or continue with</span>
         </div>
 
-        <Button type="button" onClick={handleGoogleSignup} isLoading={googleLoading} className="w-full rounded-xl border border-white/5 bg-white/[0.02] text-xs font-semibold text-zinc-300 hover:bg-white/5">
-          Sign up with Google
+        <Button
+          onClick={handleGoogleSignin}
+          variant="bordered"
+          className="w-full h-12 border-default-200 hover:bg-default-100 flex items-center justify-center gap-2"
+        >
+          <FcGoogle size={22} />
+          Continue with Google
         </Button>
       </div>
     </div>

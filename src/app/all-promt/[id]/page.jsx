@@ -3,6 +3,7 @@ import PromptHeader from "@/components/allpromt/PromptHeader";
 import PromptSidebar from "@/components/allpromt/PromptSidebar";
 import ReviewForm from "@/components/allpromt/ReviewForm";
 import ReviewList from "@/components/allpromt/ReviewList";
+import ReviewSection from "@/components/ReviewSection";
 import { getPromptById } from "@/lib/api/prompt";
 import { getUserSession } from "@/lib/core/session";
 import { redirect } from "next/navigation";
@@ -53,8 +54,10 @@ const PromptDetailsPage = async ({ params }) => {
           {/* Review only if user can access full prompt */}
           {canAccessPrompt && (
             <>
-              <ReviewList prompt={prompt} />
-              <ReviewForm promptId={id} />
+              <ReviewSection
+                prompt={prompt}
+                promptId={id}
+              />
             </>
           )}
         </div>

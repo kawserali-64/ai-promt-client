@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { Flame, Star, TrendingUp } from "lucide-react";
+import { Flame, Star, Zap, Cpu } from "lucide-react";
 import { getTrendingPrompts } from "@/lib/api/prompt";
 
 export default function TrendingPrompts() {
@@ -21,116 +21,61 @@ export default function TrendingPrompts() {
         setLoading(false);
       }
     };
-
     fetchData();
   }, []);
 
-  // 🔥 LOADING STATE (SKELETON)
-  if (loading) {
-    return (
-      <section className="py-24 bg-[#09090b] text-white">
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {[1, 2, 3, 4, 5, 6].map((i) => (
-              <div
-                key={i}
-                className="h-40 bg-zinc-800 animate-pulse rounded-2xl"
-              />
-            ))}
-          </div>
-        </div>
-      </section>
-    );
-  }
-
-  // 🔥 EMPTY STATE
-  if (!loading && prompts.length === 0) {
-    return (
-      <section className="py-24 bg-[#09090b] text-center text-zinc-400">
-        No trending prompts found 🔥
-      </section>
-    );
-  }
-
   return (
-    <section className="py-24 bg-[#09090b] text-white">
-      <div className="max-w-7xl mx-auto px-6">
+    <section className="py-24 bg-[#050505] relative">
+      {/* ব্যাকগ্রাউন্ড গ্রিড প্যাটার্ন */}
+      <div className="absolute inset-0 opacity-[0.03]" 
+           style={{ backgroundImage: 'radial-gradient(#8b5cf6 1px, transparent 1px)', backgroundSize: '30px 30px' }}>
+      </div>
 
-        {/* HEADER */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="text-center mb-14"
-        >
-          <h2 className="text-4xl font-bold flex items-center justify-center gap-2">
-            🔥 Trending Prompts
+      <div className="max-w-7xl mx-auto px-6 relative z-10">
+        <div className="mb-16">
+          <h2 className="text-4xl font-black text-white uppercase tracking-tighter flex items-center gap-3">
+            <span className="w-2 h-8 bg-violet-500 block"></span>
+            Trending <span className="text-zinc-600">Assets</span>
           </h2>
-          <p className="text-zinc-400 mt-2">
-            Most copied and highest performing prompts right now
-          </p>
-        </motion.div>
+        </div>
 
-        {/* GRID */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-
-          {prompts.map((item, index) => {
-            const isTop = index === 0;
-
-            return (
-              <motion.div
-                key={item._id}
-                initial={{ opacity: 0, y: 40, scale: 0.95 }}
-                whileInView={{ opacity: 1, y: 0, scale: 1 }}
-                transition={{ duration: 0.4, delay: index * 0.1 }}
-                viewport={{ once: true }}
-                whileHover={{ scale: 1.03 }}
-                className={`
-                  relative p-6 rounded-2xl border transition-all
-                  bg-zinc-900/60 backdrop-blur-md
-                  ${isTop
-                    ? "border-orange-400 shadow-lg shadow-orange-500/20"
-                    : "border-zinc-800 hover:border-zinc-600"
-                  }
-                `}
-              >
-
-                {/* TOP BADGE */}
-                {isTop && (
-                  <div className="absolute -top-3 -right-3 bg-orange-500 text-black px-3 py-1 rounded-full text-xs font-bold flex items-center gap-1">
-                    <TrendingUp size={14} />
-                    Trending #1
-                  </div>
-                )}
-
-                {/* TITLE */}
-                <h3 className="text-lg font-semibold mb-2 line-clamp-2">
-                  {item.title}
-                </h3>
-
-                {/* TOOL */}
-                <p className="text-sm text-zinc-400 mb-4">
-                  {item.tool}
-                </p>
-
-                {/* STATS */}
-                <div className="flex items-center justify-between text-sm">
-                  <div className="flex items-center gap-1 text-orange-400 font-medium">
-                    <Flame size={16} />
-                    {item.copyCount} copies
-                  </div>
-
-                  <div className="flex items-center gap-1 text-yellow-400 font-medium">
-                    <Star size={16} />
-                    {item.averageRating?.toFixed(1) || 0}
-                  </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {prompts.map((item, index) => (
+            <motion.div
+              key={item._id}
+              initial={{ opacity: 0, x: -20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              className="relative p-6 bg-[#0a0a0c] border border-zinc-800 hover:border-violet-500/50 transition-all duration-300 group"
+            >
+              {/* কর্নার ডেকোরেশন */}
+              <div className="absolute top-0 left-0 w-2 h-2 border-t-2 border-l-2 border-violet-500/50"></div>
+              
+              <div className="flex justify-between items-start mb-6">
+                <div className="w-10 h-10 rounded-lg bg-zinc-900 flex items-center justify-center border border-zinc-800">
+                  <Cpu size={18} className="text-violet-500" />
                 </div>
+                {index === 0 && (
+                  <span className="text-[9px] font-black uppercase bg-violet-500 text-black px-2 py-1">Top Pick</span>
+                )}
+              </div>
 
-                {/* GLOW EFFECT */}
-                <div className="absolute inset-0 rounded-2xl opacity-0 hover:opacity-100 transition bg-gradient-to-r from-orange-500/10 to-pink-500/10 pointer-events-none" />
-              </motion.div>
-            );
-          })}
+              <h3 className="text-base font-bold text-white mb-4 leading-tight group-hover:text-violet-400 transition-colors">
+                {item.title}
+              </h3>
+
+              <div className="flex items-center gap-6 mt-auto">
+                <div className="flex items-center gap-1.5 text-zinc-500">
+                  <Flame size={14} />
+                  <span className="text-[11px] font-bold tracking-widest">{item.copyCount}</span>
+                </div>
+                <div className="flex items-center gap-1.5 text-zinc-500">
+                  <Star size={14} />
+                  <span className="text-[11px] font-bold tracking-widest">{item.averageRating?.toFixed(1) || "0.0"}</span>
+                </div>
+              </div>
+            </motion.div>
+          ))}
         </div>
       </div>
     </section>

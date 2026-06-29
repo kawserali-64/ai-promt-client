@@ -1,42 +1,32 @@
 "use client";
 
 import Link from "next/link";
-import { Card, Button } from "@heroui/react";
-import { Copy, Lock } from "lucide-react";
+import { Button } from "@heroui/react";
+import { Copy, Lock, Sparkles, CheckCircle2 } from "lucide-react";
 import { CopyCount } from "@/lib/api/prompt";
+import { toast } from "react-toastify";
 
-const PromptContent = ({
-  prompt,
-  canAccessPrompt,
-}) => {
-
+const PromptContent = ({ prompt, canAccessPrompt }) => {
   const handleCopy = async () => {
     if (!canAccessPrompt) return;
-
     try {
-      await navigator.clipboard.writeText(
-        prompt.content
-      );
-
+      await navigator.clipboard.writeText(prompt.content);
       await CopyCount(prompt._id);
-
-      alert("Prompt copied successfully!");
-    } catch (error) {
-      alert("Failed to copy prompt");
+      toast.success("Prompt copied to clipboard!");
+    } catch {
+      toast.error("Failed to copy prompt");
     }
   };
 
   return (
-    <>
-      <Card className="p-6">
-        <div className="flex justify-between mb-4">
-          <h2 className="text-xl font-semibold">
-            Prompt Content
-          </h2>
-
+    <div className="space-y-6">
+      {/* Content Section */}
+      <div className="bg-[#0a0a0a] border border-white/5 rounded-[32px] p-8">
+        <div className="flex justify-between items-center mb-6">
+          <h2 className="text-xl font-bold">Prompt Content</h2>
           {canAccessPrompt && (
             <Button
-              color="primary"
+              className="bg-white text-black font-bold"
               startContent={<Copy size={16} />}
               onClick={handleCopy}
             >
@@ -45,82 +35,54 @@ const PromptContent = ({
           )}
         </div>
 
-        {canAccessPrompt ? (
-          <pre className="whitespace-pre-wrap">
-            {prompt.content}
-          </pre>
-        ) : (
-          <div className="relative min-h-[250px] overflow-hidden rounded-xl">
+        <div className="relative">
+          <div className={!canAccessPrompt ? "blur-md select-none pointer-events-none" : ""}>
+            <pre className="whitespace-pre-wrap font-mono text-sm text-zinc-300 bg-[#111] p-6 rounded-2xl border border-white/5">
+              {prompt.content}
+            </pre>
+          </div>
 
-            {/* Blurred Content */}
-            <div className="blur-md select-none pointer-events-none">
-              <pre className="whitespace-pre-wrap">
-                {prompt.content}
-              </pre>
-            </div>
-
-            {/* Lock Overlay */}
-            <div className="absolute inset-0 flex items-center justify-center bg-black/40">
-              <div className="max-w-md text-center bg-[#111827] border border-red-500 rounded-2xl p-6">
-
-                <Lock
-                  size={40}
-                  className="mx-auto text-red-500 mb-3"
-                />
-
-                <h3 className="text-xl font-bold text-white">
-                  Premium Prompt
-                </h3>
-
-                <p className="text-gray-400 mt-2">
-                  Upgrade to Premium to unlock
-                  this private prompt and gain
-                  access to all premium prompts.
-                </p>
-
+          {!canAccessPrompt && (
+            <div className="absolute inset-0 flex items-center justify-center">
+              <div className="text-center p-8 bg-[#050505]/90 backdrop-blur-xl border border-white/10 rounded-[24px] shadow-2xl">
+                <div className="w-16 h-16 bg-red-500/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <Lock size={28} className="text-red-500" />
+                </div>
+                <h3 className="text-xl font-bold">Premium Content</h3>
+                <p className="text-zinc-400 mt-2 max-w-sm">Unlock this prompt and gain full access to our exclusive AI library.</p>
                 <Link href="/plans">
-                  <Button
-                    color="danger"
-                    className="mt-5"
-                  >
+                  <Button className="mt-6 bg-red-600 text-white font-bold" startContent={<Sparkles size={16} />}>
                     Subscribe Premium
                   </Button>
                 </Link>
               </div>
             </div>
-          </div>
-        )}
-      </Card>
+          )}
+        </div>
+      </div>
 
-      {/* Instructions */}
-      {canAccessPrompt ? (
-        <Card className="p-6">
-          <h2 className="text-xl font-semibold mb-4">
-            Instructions
-          </h2>
+      {/* Instructions Section */}
+      <div className={`bg-[#0a0a0a] border ${canAccessPrompt ? "border-white/5" : "border-red-500/20"} rounded-[32px] p-8`}>
+        <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
+          {canAccessPrompt ? <CheckCircle2 size={20} className="text-emerald-500" /> : <Lock size={20} className="text-red-500" />}
+          Instructions
+        </h2>
+        
+        <div className={!canAccessPrompt ? "blur-sm select-none" : ""}>
+          <p className="text-zinc-400 leading-relaxed">{prompt.instructions}</p>
+        </div>
 
-          <p>{prompt.instructions}</p>
-        </Card>
-      ) : (
-        <Card className="p-6 border border-red-500/30">
-          <h2 className="text-xl font-semibold mb-4">
-            Instructions
-          </h2>
-
-          <div className="blur-sm select-none">
-            <p>{prompt.instructions}</p>
-          </div>
-
-          <div className="mt-4">
+        {!canAccessPrompt && (
+          <div className="mt-6">
             <Link href="/plans">
-              <Button color="danger">
-                Unlock Premium Content
+              <Button variant="bordered" className="border-red-500 text-red-500 hover:bg-red-500 hover:text-white">
+                Unlock Premium Instructions
               </Button>
             </Link>
           </div>
-        </Card>
-      )}
-    </>
+        )}
+      </div>
+    </div>
   );
 };
 

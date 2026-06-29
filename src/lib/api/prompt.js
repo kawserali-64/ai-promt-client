@@ -108,9 +108,7 @@ export const deletePrompt = (promptId) => {
   });
 };
 
-// =====================
 // COPY COUNT
-// =====================
 
 export const CopyCount = (promptId) => {
   return serverFetch(`/api/prompts/${promptId}/copy`, {
@@ -118,9 +116,7 @@ export const CopyCount = (promptId) => {
   });
 };
 
-// =====================
 // BOOKMARKS
-// =====================
 
 export const toggleBookmark = ({ userId, promptId }) => {
   return serverFetch("/api/bookmarks", {
@@ -136,17 +132,22 @@ export const getBookmarks = (userId) => {
   return serverFetch(`/api/bookmarks?userId=${userId}`);
 };
 
-// =====================
 // REVIEWS
-// =====================
 
 export const getReviews = (query) => {
   const params = new URLSearchParams(query).toString();
   return serverFetch(`/api/review?${params}`);
 };
 
-export const createReview = ({ promptId, rating, comment, userId }) => {
-  return serverFetch("/api/review", {
+export const createReview = async({
+  promptId,
+  rating,
+  comment,
+  userId,
+  name,
+  email,
+}) => {
+  const res = await serverFetch("/api/review/add", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -156,6 +157,9 @@ export const createReview = ({ promptId, rating, comment, userId }) => {
       rating,
       comment,
       userId,
+      name,
+      email,
     }),
   });
+  return res;
 };
