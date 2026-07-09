@@ -12,6 +12,10 @@ Whether you use ChatGPT, Midjourney, or Claude, this platform provides a seamles
 Built with performance, scalability, and security in mind, this marketplace enables secure prompt exchange, management, and monetization.
 
 ---
+## 📸 Homepage Screenshot
+
+![Homepage](https://github.com/user-attachments/assets/5c5bc682-846f-4673-a36c-826d5d4f08a1)
+
 
 ## 🔗 Live Demo
 
@@ -24,7 +28,6 @@ Built with performance, scalability, and security in mind, this marketplace enab
 ## 🛠 Tech Stack
 
 ### Frontend
-- React.js (Vite)
 - Tailwind CSS
 - Framer Motion
 - Recharts
