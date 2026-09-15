@@ -26,7 +26,7 @@ export default function AIPromptImproverPage() {
     setImprovedPrompt("");
 
     try {
-      const res = "http://localhost:5000/api/ai/improve-prompt";
+    const res = PROCESS.ENV.NEXT_PUBLIC_API_URL + "/api/ai/improve-prompt";
       const response = await fetch(res, {
         method: "POST",
         headers: {
