@@ -25,3 +25,18 @@ export const requireRole = async (role) => {
     redirect('/unauthorized')
   }
 }
+
+//ai tools 
+export const requireNonAdmin = async () => {
+  const user = await getUserSession();
+
+  if (!user) {
+    redirect("/auth/signin");
+  }
+
+  if (user?.role === "Admin") {
+    redirect("/unauthorized");
+  }
+
+  return user;
+};

@@ -9,7 +9,6 @@ import {
   Sparkles,
   ArrowRight,
   WandSparkles,
-  MessageCircle,
   Stars,
 } from "lucide-react";
 
@@ -38,9 +37,9 @@ const aiTools = [
     iconColor: "text-cyan-400",
     border: "hover:border-cyan-500/40",
     glow: "bg-cyan-500/10",
-    href: "#",
-    available: false,
-    badge: "Coming Soon",
+    href: "/ai-tools/prompt-improver",
+    available: true,
+    badge: "Available Now",
   },
 ];
 
@@ -97,7 +96,9 @@ const AIToolsPage = () => {
 
             const cardContent = (
               <Card
-                className={`group relative h-full overflow-hidden rounded-[28px] border border-white/5 bg-[#0a0a0a] p-7 shadow-none transition-all duration-300 ${tool.border} ${
+                className={`group relative h-full overflow-hidden rounded-[28px] border border-white/5 bg-[#0a0a0a] p-7 shadow-none transition-all duration-300 ${
+                  tool.border
+                } ${
                   tool.available
                     ? "cursor-pointer hover:-translate-y-1"
                     : "cursor-default"
@@ -105,7 +106,9 @@ const AIToolsPage = () => {
               >
                 {/* Glow */}
                 <div
-                  className={`pointer-events-none absolute -right-16 -top-16 h-40 w-40 rounded-full ${tool.glow} opacity-0 blur-3xl transition-opacity duration-300 group-hover:opacity-100`}
+                  className={`pointer-events-none absolute -right-16 -top-16 h-40 w-40 rounded-full ${
+                    tool.glow
+                  } opacity-0 blur-3xl transition-opacity duration-300 group-hover:opacity-100`}
                 />
 
                 {/* Top */}
@@ -152,13 +155,9 @@ const AIToolsPage = () => {
                       : "Coming Soon"}
                   </span>
 
-                  {tool.available ? (
+                  {tool.available && (
                     <div className="flex h-9 w-9 items-center justify-center rounded-full bg-white/5 text-zinc-400 transition-all group-hover:bg-violet-500/10 group-hover:text-violet-400">
                       <ArrowRight size={17} />
-                    </div>
-                  ) : (
-                    <div className="flex h-9 w-9 items-center justify-center rounded-full bg-white/5 text-zinc-700">
-                      <MessageCircle size={16} />
                     </div>
                   )}
                 </div>
