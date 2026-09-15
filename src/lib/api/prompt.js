@@ -163,3 +163,25 @@ export const createReview = async({
   });
   return res;
 };
+
+
+// AI PROMPT GENERATOR
+export const generatePrompt = async (data) => {
+  const res = await fetch(
+    `${process.env.NEXT_PUBLIC_BASE_URL}/api/ai/generate-prompt`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    }
+  );
+
+  if (!res.ok) {
+    const error = await res.json().catch(() => ({}));
+    throw new Error(error.message || "Failed to generate prompt");
+  }
+
+  return res.json();
+};

@@ -11,6 +11,7 @@ import {
   Home,
   LayoutDashboard,
   Crown,
+  Wand2,
 } from "lucide-react";
 
 import { useSession, signOut } from "@/lib/auth-client";
@@ -40,6 +41,8 @@ function NavbarPage() {
   };
 
   const isAdmin = user?.role?.toLowerCase() === "admin";
+  // ইউজার লগইন করা থাকলে এবং অ্যাডমিন না হলে (ইউজার বা ক্রিয়েটর হলে) AI Tools দেখাবে
+  const showAITools = user && !isAdmin;
 
   return (
     <nav className="sticky top-0 z-50 w-full border-b border-white/10 bg-[#09090b]/60 backdrop-blur-md">
@@ -71,7 +74,11 @@ function NavbarPage() {
               { href: "/", label: "Home", icon: Home },
               { href: "/all-promt", label: "All Prompts", icon: Compass },
 
-              // ✅ ONLY FIX HERE
+              // ✅ সাধারণ ইউজার বা ক্রিয়েটর হলে AI Tools দেখাবে, অ্যাডমিন হলে দেখাবে না
+              ...(showAITools
+                ? [{ href: "/ai-tools", label: "AI Tools", icon: Wand2 }]
+                : []),
+
               ...(!isAdmin
                 ? [{ href: "/plans", label: "Plans", icon: Crown }]
                 : []),
@@ -139,7 +146,11 @@ function NavbarPage() {
             { href: "/", label: "Home", icon: Home },
             { href: "/all-prompts", label: "All Prompts", icon: Compass },
 
-            // ✅ SAME FIX HERE
+            // ✅ মোবাইল মেনুতেও একই শর্তে AI Tools যোগ করা হলো
+            ...(showAITools
+              ? [{ href: "/ai-tools", label: "AI Tools", icon: Wand2 }]
+              : []),
+
             ...(!isAdmin
               ? [{ href: "/plans", label: "Plans", icon: Crown }]
               : []),

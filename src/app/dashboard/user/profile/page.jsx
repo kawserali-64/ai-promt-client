@@ -189,7 +189,7 @@ const ProfilePage = () => {
           </div>
 
           <Button
-            onClick={() => router.push("/dashboard/payment")}
+            onClick={() => router.push("/plans")}
             className="bg-gradient-to-r from-violet-600 to-indigo-600 text-white font-bold px-6 rounded-xl"
           >
             Upgrade Now ($5)
