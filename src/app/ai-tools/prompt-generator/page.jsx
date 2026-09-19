@@ -65,30 +65,30 @@ const PromptGeneratorPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#050505] px-4 py-8 md:px-8 lg:px-12">
+    <div className="min-h-screen bg-white dark:bg-[#050505] px-4 py-8 md:px-8 lg:px-12 select-none transition-colors duration-300">
       <div className="mx-auto max-w-5xl">
         {/* ==================== HEADER ==================== */}
         <div className="mb-10 text-center">
-          <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-violet-500/20 bg-violet-500/10 px-4 py-2 text-sm font-semibold text-violet-400">
+          <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-violet-500/20 bg-violet-500/10 px-4 py-2 text-sm font-semibold text-violet-600 dark:text-violet-400">
             <Sparkles size={16} />
             AI Powered
           </div>
 
-          <h1 className="text-3xl font-black tracking-tight text-white md:text-5xl">
+          <h1 className="text-3xl font-black tracking-tight text-zinc-900 dark:text-white md:text-5xl">
             AI Prompt Generator
           </h1>
 
-          <p className="mx-auto mt-3 max-w-2xl text-sm leading-6 text-zinc-500 md:text-base">
+          <p className="mx-auto mt-3 max-w-2xl text-sm leading-6 text-zinc-600 dark:text-zinc-400 md:text-base">
             Describe what you want to create and let AI generate a
             professional, clear, and powerful prompt for you.
           </p>
         </div>
 
         {/* ==================== GENERATOR FORM ==================== */}
-        <Card className="rounded-[28px] border border-white/5 bg-[#0a0a0a] p-5 shadow-none md:p-8">
+        <Card className="rounded-[28px] border border-zinc-200 dark:border-white/5 bg-white dark:bg-[#0a0a0a] p-5 shadow-sm dark:shadow-none md:p-8 transition-colors duration-300">
           {/* IDEA INPUT */}
           <div className="mb-6 flex flex-col">
-            <label className="text-white font-semibold mb-2 text-sm">
+            <label className="text-zinc-900 dark:text-white font-semibold mb-2 text-sm">
               What do you want to create?
             </label>
             <textarea
@@ -96,7 +96,7 @@ const PromptGeneratorPage = () => {
               value={idea}
               onChange={(e) => setIdea(e.target.value)}
               rows={6}
-              className="w-full rounded-xl border border-white/10 bg-[#111111] p-4 text-sm text-white placeholder:text-zinc-600 outline-none transition-all hover:border-violet-500/40 focus:border-violet-500 resize-y"
+              className="w-full rounded-xl border border-zinc-200 dark:border-white/10 bg-zinc-50 dark:bg-[#111111] p-4 text-sm text-zinc-900 dark:text-white placeholder:text-zinc-400 dark:placeholder:text-zinc-600 outline-none transition-all hover:border-violet-500/40 focus:border-violet-500 resize-y"
             />
           </div>
 
@@ -104,14 +104,14 @@ const PromptGeneratorPage = () => {
           <div className="grid gap-5 md:grid-cols-2">
             {/* AI TOOL */}
             <div>
-              <label className="mb-2 block text-sm font-semibold text-white">
+              <label className="mb-2 block text-sm font-semibold text-zinc-900 dark:text-white">
                 AI Tool
               </label>
 
               <select
                 value={aiTool}
                 onChange={(e) => setAiTool(e.target.value)}
-                className="h-12 w-full rounded-xl border border-white/10 bg-[#111111] px-4 text-sm text-white outline-none transition-all hover:border-violet-500/40 focus:border-violet-500"
+                className="h-12 w-full rounded-xl border border-zinc-200 dark:border-white/10 bg-zinc-50 dark:bg-[#111111] px-4 text-sm text-zinc-900 dark:text-white outline-none transition-all hover:border-violet-500/40 focus:border-violet-500"
               >
                 <option value="ChatGPT">ChatGPT</option>
                 <option value="Claude">Claude</option>
@@ -123,14 +123,14 @@ const PromptGeneratorPage = () => {
 
             {/* CATEGORY */}
             <div>
-              <label className="mb-2 block text-sm font-semibold text-white">
+              <label className="mb-2 block text-sm font-semibold text-zinc-900 dark:text-white">
                 Category
               </label>
 
               <select
                 value={category}
                 onChange={(e) => setCategory(e.target.value)}
-                className="h-12 w-full rounded-xl border border-white/10 bg-[#111111] px-4 text-sm text-white outline-none transition-all hover:border-violet-500/40 focus:border-violet-500"
+                className="h-12 w-full rounded-xl border border-zinc-200 dark:border-white/10 bg-zinc-50 dark:bg-[#111111] px-4 text-sm text-zinc-900 dark:text-white outline-none transition-all hover:border-violet-500/40 focus:border-violet-500"
               >
                 <option value="Web Development">Web Development</option>
                 <option value="Design">Design</option>
@@ -149,7 +149,7 @@ const PromptGeneratorPage = () => {
 
           {/* ERROR */}
           {error && (
-            <div className="mt-5 rounded-xl border border-red-500/20 bg-red-500/10 px-4 py-3 text-sm text-red-400">
+            <div className="mt-5 rounded-xl border border-red-500/20 bg-red-500/10 px-4 py-3 text-sm text-red-500 dark:text-red-400">
               {error}
             </div>
           )}
@@ -164,7 +164,7 @@ const PromptGeneratorPage = () => {
               startContent={
                 !loading && <WandSparkles size={18} />
               }
-              className="bg-violet-600 px-7 font-bold text-white hover:bg-violet-500"
+              className="bg-violet-600 px-7 font-bold text-white hover:bg-violet-500 transition-all"
             >
               {loading ? "Generating..." : "Generate Prompt"}
             </Button>
@@ -173,21 +173,21 @@ const PromptGeneratorPage = () => {
 
         {/* ==================== GENERATED PROMPT ==================== */}
         {generatedPrompt && (
-          <Card className="mt-6 rounded-[28px] border border-violet-500/20 bg-[#0a0a0a] p-5 shadow-none md:p-8">
+          <Card className="mt-6 rounded-[28px] border border-violet-500/20 bg-white dark:bg-[#0a0a0a] p-5 shadow-sm dark:shadow-none md:p-8 transition-colors duration-300">
             {/* RESULT HEADER */}
             <div className="mb-5 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
               <div>
                 <div className="flex items-center gap-2">
-                  <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-violet-500/10 text-violet-400">
+                  <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-violet-500/10 text-violet-600 dark:text-violet-400">
                     <Bot size={19} />
                   </div>
 
-                  <h2 className="text-xl font-bold text-white">
+                  <h2 className="text-xl font-bold text-zinc-900 dark:text-white">
                     Generated Prompt
                   </h2>
                 </div>
 
-                <p className="mt-2 text-sm text-zinc-500">
+                <p className="mt-2 text-sm text-zinc-600 dark:text-zinc-400">
                   Your AI-generated prompt is ready to use.
                 </p>
               </div>
@@ -202,8 +202,8 @@ const PromptGeneratorPage = () => {
                 }
                 className={
                   copied
-                    ? "bg-green-500/10 font-semibold text-green-400"
-                    : "bg-white/5 font-semibold text-white hover:bg-white/10"
+                    ? "bg-green-500/10 font-semibold text-green-600 dark:text-green-400"
+                    : "bg-zinc-100 dark:bg-white/5 font-semibold text-zinc-900 dark:text-white hover:bg-zinc-200 dark:hover:bg-white/10"
                 }
               >
                 {copied ? "Copied" : "Copy"}
@@ -211,8 +211,8 @@ const PromptGeneratorPage = () => {
             </div>
 
             {/* GENERATED TEXT */}
-            <div className="rounded-2xl border border-white/5 bg-[#111111] p-5">
-              <p className="whitespace-pre-wrap text-sm leading-7 text-zinc-300">
+            <div className="rounded-2xl border border-zinc-200 dark:border-white/5 bg-zinc-50 dark:bg-[#111111] p-5">
+              <p className="whitespace-pre-wrap text-sm leading-7 text-zinc-700 dark:text-zinc-300">
                 {generatedPrompt}
               </p>
             </div>

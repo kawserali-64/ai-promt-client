@@ -2,167 +2,452 @@
 
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import {
-    Trash2,
-    UserCog,
-    Crown,
-} from "lucide-react";
+import { Trash2, UserCog, Crown } from "lucide-react";
 import Image from "next/image";
+import { useTheme } from "next-themes";
 
 const AllAdminUserPage = () => {
-    const [users, setUsers] = useState([]);
-    const [loading, setLoading] = useState(true);
+  const [users, setUsers] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [mounted, setMounted] = useState(false);
 
-    const fetchUsers = async () => {
-        try {
-            const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/users`);
-            if (!res.ok) throw new Error("Failed to fetch users");
-            const data = await res.json();
-            setUsers(Array.isArray(data) ? data : []);
-        } catch (error) {
-            console.error(error);
-            toast.error("Failed to load users");
-        } finally {
-            setLoading(false);
+  const { resolvedTheme } = useTheme();
+
+  // Client hydration check
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  const isDark = mounted && resolvedTheme === "dark";
+
+  const fetchUsers = async () => {
+    try {
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_BASE_URL}/api/users`
+      );
+
+      if (!res.ok) throw new Error("Failed to fetch users");
+
+      const data = await res.json();
+      setUsers(Array.isArray(data) ? data : []);
+    } catch (error) {
+      console.error(error);
+      toast.error("Failed to load users");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchUsers();
+  }, []);
+
+  const handleRoleChange = async (id, role) => {
+    try {
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_BASE_URL}/api/users/${id}/role`,
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ role }),
         }
-    };
+      );
 
-    useEffect(() => {
-        fetchUsers();
-    }, []);
+      const data = await res.json();
 
-    const handleRoleChange = async (id, role) => {
-        try {
-            const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/users/${id}/role`, {
-                method: "PATCH",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ role }),
-            });
-            const data = await res.json();
-            if (data.success) {
-                toast.success("Role updated");
-                setUsers((prev) => prev.map((u) => (u._id === id ? { ...u, role } : u)));
-            } else {
-                toast.error("Role update failed");
-            }
-        } catch (error) {
-            toast.error("Role update failed");
-        }
-    };
+      if (data.success) {
+        toast.success("Role updated");
 
-    const handleDelete = async (id) => {
-        if (!window.confirm("Are you sure you want to delete this user?")) return;
-        try {
-            const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/users/${id}`, { method: "DELETE" });
-            const data = await res.json();
-            if (data.success) {
-                toast.success("User deleted");
-                setUsers((prev) => prev.filter((u) => u._id !== id));
-            } else {
-                toast.error("Delete failed");
-            }
-        } catch (error) {
-            toast.error("Delete failed");
-        }
-    };
-
-    if (loading) {
-        return (
-            <div className="flex justify-center items-center min-h-[500px]">
-                <span className="loading loading-spinner loading-lg text-indigo-500"></span>
-            </div>
+        setUsers((prev) =>
+          prev.map((u) => (u._id === id ? { ...u, role } : u))
         );
+      } else {
+        toast.error("Role update failed");
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error("Role update failed");
+    }
+  };
+
+  const handleDelete = async (id) => {
+    if (!window.confirm("Are you sure you want to delete this user?")) {
+      return;
     }
 
+    try {
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_BASE_URL}/api/users/${id}`,
+        {
+          method: "DELETE",
+        }
+      );
+
+      const data = await res.json();
+
+      if (data.success) {
+        toast.success("User deleted");
+
+        setUsers((prev) => prev.filter((u) => u._id !== id));
+      } else {
+        toast.error("Delete failed");
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error("Delete failed");
+    }
+  };
+
+  // 1. Hydration Mismatch & Theme Flash প্রতিরোধ
+  if (!mounted) {
+    return <div className="min-h-screen w-full opacity-0" />;
+  }
+
+  // 2. Loading State
+  if (loading) {
     return (
-        <div className="space-y-8 p-6 bg-[#050505] min-h-screen">
-            {/* HEADER */}
-            <div>
-                <h1 className="text-3xl font-bold text-white tracking-tight">User Role & Accounts Management</h1>
-                <p className="text-zinc-500 mt-2">Review accounts, modify role scopes, and delete users.</p>
-            </div>
+      <div
+        className={`min-h-screen flex items-center justify-center transition-colors duration-300 ${
+          isDark ? "bg-[#050505]" : "bg-zinc-50"
+        }`}
+      >
+        <div className="flex flex-col items-center justify-center">
+          {/* LOADING ICON */}
+          <div
+            className={`relative flex items-center justify-center w-16 h-16 rounded-2xl border ${
+              isDark
+                ? "bg-[#0a0a0a] border-white/10"
+                : "bg-white border-zinc-200 shadow-sm"
+            }`}
+          >
+            <div
+              className={`w-8 h-8 rounded-full border-4 border-t-transparent animate-spin ${
+                isDark
+                  ? "border-violet-500 border-t-transparent"
+                  : "border-violet-600 border-t-transparent"
+              }`}
+            />
+          </div>
 
-            {/* TABLE CARD */}
-            <div className="bg-[#0a0a0a] border border-white/5 rounded-2xl overflow-hidden shadow-2xl">
-                <div className="overflow-x-auto">
-                    <table className="w-full text-left border-collapse">
-                        <thead>
-                            <tr className="border-b border-white/5 text-zinc-500 text-[10px] uppercase tracking-widest">
-                                <th className="px-6 py-5 font-semibold">Profile Details</th>
-                                <th className="px-6 py-5 font-semibold">Email Address</th>
-                                <th className="px-6 py-5 font-semibold">Subscription</th>
-                                <th className="px-6 py-5 font-semibold">Role Level</th>
-                                <th className="px-6 py-5 font-semibold">Registered Date</th>
-                                <th className="px-6 py-5 font-semibold text-center">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody className="divide-y divide-white/5">
-                            {users.map((user) => (
-                                <tr key={user._id} className="hover:bg-white/[0.02] transition-colors duration-200">
-                                    <td className="px-6 py-4">
-                                        <div className="flex items-center gap-4">
-                                            {user?.image ? (
-                                                <Image src={user.image} alt={user.name} width={40} height={40} className="rounded-full border border-white/10" />
-                                            ) : (
-                                                <div className="w-10 h-10 rounded-full bg-indigo-500/20 text-indigo-400 flex items-center justify-center font-bold text-sm">
-                                                    {user?.name?.charAt(0)?.toUpperCase()}
-                                                </div>
-                                            )}
-                                            <div>
-                                                <h3 className="font-medium text-zinc-200 text-sm">{user?.name}</h3>
-                                                <p className="text-[10px] text-zinc-600 font-mono mt-0.5">ID: {user?._id?.slice(-6)}</p>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td className="px-6 py-4 text-zinc-400 text-sm">{user?.email}</td>
-                                    <td className="px-6 py-4">
-                                        {user.plan === "pro" ? (
-                                            <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-[10px] font-bold uppercase">
-                                                <Crown size={10} /> Premium
-                                            </span>
-                                        ) : (
-                                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full bg-white/5 text-zinc-500 border border-white/10 text-[10px] font-bold uppercase">
-                                                Free
-                                            </span>
-                                        )}
-                                    </td>
-                                    <td className="px-6 py-4">
-                                        <select
-                                            value={user.role || "User"}
-                                            onChange={(e) => handleRoleChange(user._id, e.target.value)}
-                                            className="bg-[#0f0f0f] border border-white/10 text-zinc-300 text-xs rounded-lg px-3 py-2 outline-none focus:border-indigo-500 transition cursor-pointer"
-                                        >
-                                            <option value="User">User</option>
-                                            <option value="Creator">Creator</option>
-                                            <option value="Admin">Admin</option>
-                                        </select>
-                                    </td>
-                                    <td className="px-6 py-4 text-zinc-500 text-sm">
-                                        {user.createdAt ? new Date(user.createdAt).toLocaleDateString() : "N/A"}
-                                    </td>
-                                    <td className="px-6 py-4 text-center">
-                                        <button
-                                            onClick={() => handleDelete(user._id)}
-                                            className="text-zinc-600 hover:text-red-400 transition-colors p-2"
-                                        >
-                                            <Trash2 size={16} />
-                                        </button>
-                                    </td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                </div>
+          {/* LOADING TEXT */}
+          <h2
+            className={`mt-5 text-lg font-semibold ${
+              isDark ? "text-white" : "text-zinc-900"
+            }`}
+          >
+            Loading Users
+          </h2>
 
-                {users.length === 0 && (
-                    <div className="py-20 text-center">
-                        <UserCog size={48} className="mx-auto text-zinc-800 mb-4" />
-                        <h3 className="text-lg font-semibold text-zinc-300">No Users Found</h3>
-                    </div>
-                )}
-            </div>
+          <p
+            className={`mt-1 text-sm ${
+              isDark ? "text-zinc-500" : "text-zinc-500"
+            }`}
+          >
+            Preparing user management...
+          </p>
+
+          {/* DOTS */}
+          <div className="flex gap-1.5 mt-4">
+            <span
+              className={`w-1.5 h-1.5 rounded-full animate-bounce ${
+                isDark ? "bg-violet-500" : "bg-violet-600"
+              }`}
+            />
+            <span
+              className={`w-1.5 h-1.5 rounded-full animate-bounce [animation-delay:150ms] ${
+                isDark ? "bg-violet-500" : "bg-violet-600"
+              }`}
+            />
+            <span
+              className={`w-1.5 h-1.5 rounded-full animate-bounce [animation-delay:300ms] ${
+                isDark ? "bg-violet-500" : "bg-violet-600"
+              }`}
+            />
+          </div>
         </div>
+      </div>
     );
+  }
+
+  return (
+    <div
+      className={`space-y-8 p-6 min-h-screen transition-colors duration-300 ${
+        isDark ? "bg-[#050505]" : "bg-zinc-50"
+      }`}
+    >
+      {/* HEADER */}
+      <div>
+        <h1
+          className={`text-3xl font-bold tracking-tight ${
+            isDark ? "text-white" : "text-violet-600"
+          }`}
+        >
+          User Role & Accounts Management
+        </h1>
+
+        <p
+          className={`mt-2 ${
+            isDark ? "text-zinc-400" : "text-zinc-500"
+          }`}
+        >
+          Review accounts, modify role scopes, and delete users.
+        </p>
+      </div>
+
+      {/* USERS TABLE */}
+      <div
+        className={`border rounded-2xl overflow-hidden transition-colors duration-300 ${
+          isDark
+            ? "bg-[#0a0a0a] border-white/5 shadow-2xl"
+            : "bg-white border-zinc-200 shadow-sm"
+        }`}
+      >
+        <div className="overflow-x-auto">
+          <table className="w-full text-left border-collapse">
+            <thead>
+              <tr
+                className={`border-b ${
+                  isDark
+                    ? "border-white/5 bg-white/[0.02]"
+                    : "border-zinc-100 bg-zinc-50/70"
+                }`}
+              >
+                <th
+                  className={`px-6 py-4 text-xs font-bold uppercase tracking-wider ${
+                    isDark ? "text-zinc-400" : "text-zinc-500"
+                  }`}
+                >
+                  Profile Details
+                </th>
+
+                <th
+                  className={`px-6 py-4 text-xs font-bold uppercase tracking-wider ${
+                    isDark ? "text-zinc-400" : "text-zinc-500"
+                  }`}
+                >
+                  Email Address
+                </th>
+
+                <th
+                  className={`px-6 py-4 text-xs font-bold uppercase tracking-wider ${
+                    isDark ? "text-zinc-400" : "text-zinc-500"
+                  }`}
+                >
+                  Subscription
+                </th>
+
+                <th
+                  className={`px-6 py-4 text-xs font-bold uppercase tracking-wider ${
+                    isDark ? "text-zinc-400" : "text-zinc-500"
+                  }`}
+                >
+                  Role Level
+                </th>
+
+                <th
+                  className={`px-6 py-4 text-xs font-bold uppercase tracking-wider ${
+                    isDark ? "text-zinc-400" : "text-zinc-500"
+                  }`}
+                >
+                  Registered Date
+                </th>
+
+                <th
+                  className={`px-6 py-4 text-xs font-bold uppercase tracking-wider text-right ${
+                    isDark ? "text-zinc-400" : "text-zinc-500"
+                  }`}
+                >
+                  Actions
+                </th>
+              </tr>
+            </thead>
+
+            <tbody
+              className={`divide-y ${
+                isDark ? "divide-white/5" : "divide-zinc-100"
+              }`}
+            >
+              {users.map((user) => (
+                <tr
+                  key={user._id}
+                  className={`transition-colors duration-200 ${
+                    isDark ? "hover:bg-white/[0.02]" : "hover:bg-zinc-50"
+                  }`}
+                >
+                  {/* PROFILE */}
+                  <td className="px-6 py-5">
+                    <div className="flex items-center gap-3">
+                      {user.image ? (
+                        <Image
+                          src={user.image}
+                          alt={user.name || "User"}
+                          width={42}
+                          height={42}
+                          className="w-10 h-10 rounded-full object-cover"
+                        />
+                      ) : (
+                        <div
+                          className={`w-10 h-10 rounded-full flex items-center justify-center font-bold ${
+                            isDark
+                              ? "bg-violet-500/10 text-violet-400"
+                              : "bg-violet-100 text-violet-600"
+                          }`}
+                        >
+                          {user.name
+                            ?.charAt(0)
+                            ?.toUpperCase() || "U"}
+                        </div>
+                      )}
+
+                      <div>
+                        <p
+                          className={`font-semibold ${
+                            isDark ? "text-white" : "text-zinc-900"
+                          }`}
+                        >
+                          {user.name || "Unknown User"}
+                        </p>
+
+                        <p
+                          className={`text-xs mt-1 ${
+                            isDark ? "text-zinc-500" : "text-zinc-400"
+                          }`}
+                        >
+                          User Account
+                        </p>
+                      </div>
+                    </div>
+                  </td>
+
+                  {/* EMAIL */}
+                  <td className="px-6 py-5">
+                    <span
+                      className={`text-sm ${
+                        isDark ? "text-zinc-300" : "text-zinc-600"
+                      }`}
+                    >
+                      {user.email}
+                    </span>
+                  </td>
+
+                  {/* SUBSCRIPTION */}
+                  <td className="px-6 py-5">
+                    {user.plan === "pro" ? (
+                      <span
+                        className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold ${
+                          isDark
+                            ? "bg-yellow-500/10 text-yellow-400 border border-yellow-500/20"
+                            : "bg-yellow-50 text-yellow-600 border border-yellow-200"
+                        }`}
+                      >
+                        <Crown size={13} />
+                        Premium
+                      </span>
+                    ) : (
+                      <span
+                        className={`inline-flex px-3 py-1.5 rounded-full text-xs font-semibold ${
+                          isDark
+                            ? "bg-zinc-800 text-zinc-400"
+                            : "bg-zinc-100 text-zinc-500"
+                        }`}
+                      >
+                        Free
+                      </span>
+                    )}
+                  </td>
+
+                  {/* ROLE */}
+                  <td className="px-6 py-5">
+                    <select
+                      value={user.role || "user"}
+                      onChange={(e) =>
+                        handleRoleChange(
+                          user._id,
+                          e.target.value
+                        )
+                      }
+                      className={`px-3 py-2 rounded-lg border text-sm font-medium outline-none cursor-pointer ${
+                        isDark
+                          ? "bg-[#111111] border-white/10 text-white"
+                          : "bg-white border-zinc-200 text-zinc-900"
+                      }`}
+                    >
+                      <option value="user">User</option>
+                      <option value="creator">Creator</option>
+                      <option value="admin">Admin</option>
+                    </select>
+                  </td>
+
+                  {/* DATE */}
+                  <td className="px-6 py-5">
+                    <span
+                      className={`text-sm ${
+                        isDark ? "text-zinc-400" : "text-zinc-500"
+                      }`}
+                    >
+                      {user.createdAt
+                        ? new Date(
+                            user.createdAt
+                          ).toLocaleDateString()
+                        : "N/A"}
+                    </span>
+                  </td>
+
+                  {/* DELETE */}
+                  <td className="px-6 py-5 text-right">
+                    <button
+                      onClick={() =>
+                        handleDelete(user._id)
+                      }
+                      className={`inline-flex items-center justify-center w-9 h-9 rounded-lg transition-colors ${
+                        isDark
+                          ? "text-red-400 hover:bg-red-500/10"
+                          : "text-red-500 hover:bg-red-50"
+                      }`}
+                      title="Delete user"
+                    >
+                      <Trash2 size={18} />
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        {/* EMPTY STATE */}
+        {users.length === 0 && (
+          <div className="flex flex-col items-center justify-center py-20">
+            <div
+              className={`w-16 h-16 rounded-full flex items-center justify-center mb-4 ${
+                isDark ? "bg-white/5 text-zinc-500" : "bg-zinc-100 text-zinc-400"
+              }`}
+            >
+              <UserCog size={28} />
+            </div>
+
+            <h3
+              className={`text-lg font-semibold ${
+                isDark ? "text-white" : "text-zinc-900"
+              }`}
+            >
+              No Users Found
+            </h3>
+
+            <p
+              className={`mt-1 text-sm ${
+                isDark ? "text-zinc-500" : "text-zinc-400"
+              }`}
+            >
+              There are no user accounts to display.
+            </p>
+          </div>
+        )}
+      </div>
+    </div>
+  );
 };
 
 export default AllAdminUserPage;

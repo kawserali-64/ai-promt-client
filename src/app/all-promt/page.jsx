@@ -23,7 +23,9 @@ const createPageLink = (page, params) => {
 };
 
 const AllPromptPage = async ({ searchParams }) => {
-  const params = (await searchParams) || {};
+  const resolvedParams = await searchParams;
+  const params = resolvedParams || {};
+
   const page = Number(params.page || 1);
   const sort = params.sort || "latest";
 
@@ -39,24 +41,31 @@ const AllPromptPage = async ({ searchParams }) => {
   const totalPages = data?.totalPages || 1;
 
   return (
-    <div className="p-6 bg-[#050505] min-h-screen text-white">
+    <div className="p-6 sm:p-10 bg-zinc-50 dark:bg-[#050505] min-h-screen text-zinc-900 dark:text-white transition-colors duration-300">
       <div className="max-w-7xl mx-auto">
+
+        {/* SearchFilter Component */}
         <SearchFilter />
 
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-10 mt-6 gap-4">
-          <h2 className="text-2xl font-black text-white/90">Browse Prompts</h2>
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-10 mt-8 gap-4">
+          {/* ব্রাউজ প্রম্পট হেডিং: লাইট মোডে গাঢ় কালো, ডার্ক মোডে সাদা */}
+          <h2 className="text-2xl font-black tracking-tight">
+            <span className="!text-zinc-900 dark:!text-white">Browse </span>
+            <span className="bg-gradient-to-r from-violet-600 to-indigo-500 bg-clip-text text-transparent">
+              Prompts
+            </span>
+          </h2>
 
-          {/* SORT */}
-          <div className="flex gap-1.5 bg-[#0f0f0f] p-1.5 rounded-2xl border border-white/5">
+          {/* SORT TABS: সার্চ বাটনের স্টাইলের সাথে মিলিয়ে ভায়োলেট করা হলো */}
+          <div className="flex gap-1.5 bg-zinc-200/70 dark:bg-[#0f0f0f] p-1.5 rounded-2xl border border-zinc-300/60 dark:border-white/5">
             {sortOptions.map((item) => (
               <Link
                 key={item.value}
                 href={createSortLink(item.value, params)}
-                className={`px-5 py-2 text-sm font-medium rounded-xl transition-all duration-300 ${
-                  sort === item.value
-                    ? "bg-white text-black font-bold shadow-lg"
-                    : "text-zinc-500 hover:text-white"
-                }`}
+                className={`px-5 py-2 text-sm font-medium rounded-xl transition-all duration-300 ${sort === item.value
+                    ? "bg-violet-600 text-white font-semibold shadow-[0_0_15px_rgba(124,58,237,0.4)]"
+                    : "text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white"
+                  }`}
               >
                 {item.label}
               </Link>
@@ -65,31 +74,38 @@ const AllPromptPage = async ({ searchParams }) => {
         </div>
 
         {/* GRID */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {prompts.map((p) => (
-            <PromptCard key={p._id} prompt={p} />
-          ))}
-        </div>
+        {prompts.length === 0 ? (
+          <div className="text-center text-zinc-500 py-16 bg-white dark:bg-[#0f0f0f] rounded-3xl border border-zinc-200 dark:border-white/5">
+            No prompts found matching your criteria.
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {prompts.map((p) => (
+              <PromptCard key={p._id} prompt={p} />
+            ))}
+          </div>
+        )}
 
         {/* PAGINATION */}
-        <div className="flex gap-2 mt-16 justify-center">
-          {Array.from({ length: totalPages }).map((_, i) => {
-            const pageNum = i + 1;
-            return (
-              <Link
-                key={pageNum}
-                href={createPageLink(pageNum, params)}
-                className={`w-11 h-11 flex items-center justify-center rounded-xl border transition-all duration-300 font-bold ${
-                  pageNum === page
-                    ? "bg-white text-black border-white"
-                    : "border-white/5 bg-[#0f0f0f] text-zinc-500 hover:border-white/20 hover:text-white"
-                }`}
-              >
-                {pageNum}
-              </Link>
-            );
-          })}
-        </div>
+        {totalPages > 1 && (
+          <div className="flex gap-2 mt-16 justify-center">
+            {Array.from({ length: totalPages }).map((_, i) => {
+              const pageNum = i + 1;
+              return (
+                <Link
+                  key={pageNum}
+                  href={createPageLink(pageNum, params)}
+                  className={`w-11 h-11 flex items-center justify-center rounded-xl border transition-all duration-300 font-bold ${pageNum === page
+                      ? "bg-violet-600 text-white border-violet-600 shadow-[0_0_15px_rgba(124,58,237,0.4)]"
+                      : "border-zinc-300 bg-white text-zinc-700 hover:border-zinc-400 hover:text-zinc-900 dark:border-white/5 dark:bg-[#0f0f0f] dark:text-zinc-400 dark:hover:border-white/20 dark:hover:text-white"
+                    }`}
+                >
+                  {pageNum}
+                </Link>
+              );
+            })}
+          </div>
+        )}
       </div>
     </div>
   );

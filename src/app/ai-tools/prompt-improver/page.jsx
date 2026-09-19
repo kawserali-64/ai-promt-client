@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { Button, Card } from "@heroui/react";
-import { Sparkles, Copy, Check } from "lucide-react";
+import { Sparkles, Copy, Check, Bot } from "lucide-react";
 
 const AI_TOOLS = [
   { key: "ChatGPT", label: "ChatGPT" },
@@ -26,14 +26,21 @@ export default function AIPromptImproverPage() {
     setImprovedPrompt("");
 
     try {
-    const res = PROCESS.ENV.NEXT_PUBLIC_API_URL + "/api/ai/improve-prompt";
-      const response = await fetch(res, {
+      const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "";
+      const apiUrl = `${baseUrl}/api/ai/improve-prompt`;
+      
+      const response = await fetch(apiUrl, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ rawPrompt, aiTool }),
       });
+
+      const contentType = response.headers.get("content-type");
+      if (!contentType || !contentType.includes("application/json")) {
+        throw new Error("API endpoint not found (404) or server error.");
+      }
 
       const data = await response.json();
 
@@ -58,82 +65,115 @@ export default function AIPromptImproverPage() {
   };
 
   return (
-    <div className="max-w-4xl mx-auto px-4 py-10 space-y-8">
-      <div className="text-center space-y-2">
-        <h1 className="text-3xl font-bold tracking-tight text-white flex items-center justify-center gap-2">
-          <Sparkles className="h-8 w-8 text-violet-500" /> AI Prompt Improver
-        </h1>
-        <p className="text-zinc-400">
-          Paste your raw or weak prompt below and transform it into a masterpiece.
-        </p>
-      </div>
-
-      <Card className="bg-[#121214] border border-white/10 p-6 shadow-xl">
-        <form onSubmit={handleImprove} className="space-y-6">
-          <div className="space-y-2">
-            <label className="text-sm font-medium text-zinc-300">
-              Your Raw Prompt
-            </label>
-            <textarea
-              placeholder="e.g., Write a blog post about coffee."
-              value={rawPrompt}
-              onChange={(e) => setRawPrompt(e.target.value)}
-              rows={4}
-              className="w-full bg-[#18181b] border border-white/10 text-white placeholder:text-zinc-500 rounded-xl p-4 focus:outline-none focus:border-violet-500 transition-colors resize-y"
-            />
+    <div className="min-h-screen bg-white dark:bg-[#050505] px-4 py-8 md:px-8 lg:px-12 select-none transition-colors duration-300">
+      <div className="mx-auto max-w-5xl space-y-8">
+        
+        {/* ==================== HEADER ==================== */}
+        <div className="text-center">
+          <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-violet-500/20 bg-violet-500/10 px-4 py-2 text-sm font-semibold text-violet-600 dark:text-violet-400">
+            <Sparkles size={16} />
+            AI Powered
           </div>
+          <h1 className="text-3xl font-black tracking-tight text-zinc-900 dark:text-white md:text-5xl">
+            AI Prompt Improver
+          </h1>
+          <p className="mx-auto mt-3 max-w-2xl text-sm leading-6 text-zinc-600 dark:text-zinc-400 md:text-base">
+            Paste your raw or weak prompt below and transform it into a professional, clear, and powerful masterpiece.
+          </p>
+        </div>
 
-          <div className="space-y-2">
-            <label className="text-sm font-medium text-zinc-300">
-              Target AI Tool
-            </label>
-            <select
-              value={aiTool}
-              onChange={(e) => setAiTool(e.target.value)}
-              className="w-full bg-[#18181b] border border-white/10 text-white rounded-xl px-4 py-3 focus:outline-none focus:border-violet-500 transition-colors"
-            >
-              {AI_TOOLS.map((tool) => (
-                <option key={tool.key} value={tool.key} className="bg-[#18181b] text-white">
-                  {tool.label}
-                </option>
-              ))}
-            </select>
-          </div>
+        {/* ==================== MAIN FORM CARD ==================== */}
+        <Card className="rounded-[28px] border border-zinc-200 dark:border-white/5 bg-white dark:bg-[#0a0a0a] p-5 shadow-sm dark:shadow-none md:p-8 transition-colors duration-300">
+          <form onSubmit={handleImprove} className="space-y-6">
+            
+            {/* RAW PROMPT INPUT */}
+            <div className="space-y-2">
+              <label className="text-sm font-semibold text-zinc-900 dark:text-white">
+                Your Raw Prompt
+              </label>
+              <textarea
+                placeholder="e.g., Write a blog post about coffee."
+                value={rawPrompt}
+                onChange={(e) => setRawPrompt(e.target.value)}
+                rows={5}
+                className="w-full rounded-xl border border-zinc-200 dark:border-white/10 bg-zinc-50 dark:bg-[#111111] p-4 text-sm text-zinc-900 dark:text-white placeholder:text-zinc-400 dark:placeholder:text-zinc-600 outline-none transition-all hover:border-violet-500/40 focus:border-violet-500 resize-y"
+              />
+            </div>
 
-          <Button
-            type="submit"
-            isLoading={loading}
-            className="w-full bg-violet-600 hover:bg-violet-700 text-white font-semibold h-12 rounded-xl shadow-[0_0_20px_-5px_rgba(124,58,237,0.5)]"
-            startContent={!loading && <Sparkles className="h-5 w-5" />}
-          >
-            {loading ? "Enhancing Prompt..." : "Improve Prompt"}
-          </Button>
-        </form>
-      </Card>
+            {/* TARGET AI TOOL SELECTOR */}
+            <div className="space-y-2">
+              <label className="text-sm font-semibold text-zinc-900 dark:text-white">
+                Target AI Tool
+              </label>
+              <select
+                value={aiTool}
+                onChange={(e) => setAiTool(e.target.value)}
+                className="h-12 w-full rounded-xl border border-zinc-200 dark:border-white/10 bg-zinc-50 dark:bg-[#111111] px-4 text-sm text-zinc-900 dark:text-white outline-none transition-all hover:border-violet-500/40 focus:border-violet-500"
+              >
+                {AI_TOOLS.map((tool) => (
+                  <option key={tool.key} value={tool.key} className="bg-white dark:bg-[#111111] text-zinc-900 dark:text-white">
+                    {tool.label}
+                  </option>
+                ))}
+              </select>
+            </div>
 
-      {improvedPrompt && (
-        <Card className="bg-[#121214] border border-white/10 p-6 shadow-xl relative animate-in fade-in duration-300">
-          <div className="flex items-center justify-between pb-4 border-b border-white/10">
-            <h3 className="text-lg font-semibold text-white flex items-center gap-2">
-              <Sparkles className="h-5 w-5 text-violet-500" /> Optimized Prompt
-            </h3>
-            <Button
-              size="sm"
-              variant="flat"
-              onClick={handleCopy}
-              className="bg-white/10 text-zinc-300 hover:bg-white/20"
-              startContent={
-                copied ? <Check className="h-4 w-4 text-green-400" /> : <Copy className="h-4 w-4" />
-              }
-            >
-              {copied ? "Copied!" : "Copy"}
-            </Button>
-          </div>
-          <div className="pt-4 text-zinc-300 whitespace-pre-wrap leading-relaxed">
-            {improvedPrompt}
-          </div>
+            {/* SUBMIT BUTTON */}
+            <div className="flex justify-end pt-2">
+              <Button
+                type="submit"
+                size="lg"
+                isLoading={loading}
+                isDisabled={loading || !rawPrompt.trim()}
+                className="bg-violet-600 px-7 font-bold text-white hover:bg-violet-500 transition-all shadow-[0_0_20px_-5px_rgba(124,58,237,0.5)]"
+                startContent={!loading && <Sparkles size={18} />}
+              >
+                {loading ? "Enhancing Prompt..." : "Improve Prompt"}
+              </Button>
+            </div>
+          </form>
         </Card>
-      )}
+
+        {/* ==================== RESULT CARD ==================== */}
+        {improvedPrompt && (
+          <Card className="rounded-[28px] border border-violet-500/20 bg-white dark:bg-[#0a0a0a] p-5 shadow-sm dark:shadow-none md:p-8 transition-colors duration-300 animate-in fade-in duration-300">
+            
+            {/* RESULT HEADER */}
+            <div className="mb-5 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+              <div className="flex items-center gap-3">
+                <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-violet-500/10 text-violet-600 dark:text-violet-400">
+                  <Bot size={19} />
+                </div>
+                <h3 className="text-xl font-bold text-zinc-900 dark:text-white">
+                  Optimized Prompt
+                </h3>
+              </div>
+
+              <Button
+                size="sm"
+                variant="flat"
+                onClick={handleCopy}
+                className={
+                  copied
+                    ? "bg-green-500/10 font-semibold text-green-600 dark:text-green-400"
+                    : "bg-zinc-100 dark:bg-white/5 font-semibold text-zinc-900 dark:text-white hover:bg-zinc-200 dark:hover:bg-white/10"
+                }
+                startContent={copied ? <Check size={16} /> : <Copy size={16} />}
+              >
+                {copied ? "Copied" : "Copy"}
+              </Button>
+            </div>
+
+            {/* OPTIMIZED TEXT */}
+            <div className="rounded-2xl border border-zinc-200 dark:border-white/5 bg-zinc-50 dark:bg-[#111111] p-5">
+              <p className="whitespace-pre-wrap text-sm leading-7 text-zinc-700 dark:text-zinc-300">
+                {improvedPrompt}
+              </p>
+            </div>
+          </Card>
+        )}
+
+      </div>
     </div>
   );
 }

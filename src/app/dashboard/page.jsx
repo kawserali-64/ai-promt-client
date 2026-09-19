@@ -11,8 +11,8 @@ const DashboardHomePage = () => {
     if (isPending) {
         return (
             <div className="flex flex-col items-center justify-center py-20 gap-4">
-                <div className="w-8 h-8 border-2 border-white/10 rounded-full animate-spin border-t-white"></div>
-                <p className="text-zinc-500 text-sm font-medium tracking-wide">Loading...</p>
+                <div className="w-8 h-8 border-2 border-zinc-300 dark:border-white/10 rounded-full animate-spin border-t-violet-600 dark:border-t-white"></div>
+                <p className="text-zinc-500 dark:text-zinc-400 text-sm font-medium tracking-wide">Loading...</p>
             </div>
         );
     }
@@ -21,7 +21,7 @@ const DashboardHomePage = () => {
     }
 
     if (user?.role === 'Creator') {
-        redirect('/dashboard/creator/my-prompt')
+        redirect('/dashboard/creator/creatorHome')
     }
 
     if (user?.role === 'Admin') {

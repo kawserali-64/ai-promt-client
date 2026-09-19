@@ -1,9 +1,7 @@
 "use client";
 
 import Link from "next/link";
-
 import { Card } from "@heroui/react";
-
 import {
   Bot,
   Sparkles,
@@ -20,7 +18,7 @@ const aiTools = [
       "Turn your ideas into powerful, clear, and professional AI prompts in seconds.",
     icon: Bot,
     iconBg: "bg-violet-500/10",
-    iconColor: "text-violet-400",
+    iconColor: "text-violet-600 dark:text-violet-400",
     border: "hover:border-violet-500/40",
     glow: "bg-violet-500/10",
     href: "/ai-tools/prompt-generator",
@@ -34,7 +32,7 @@ const aiTools = [
       "Improve your existing prompts and make them clearer, smarter, and more effective.",
     icon: WandSparkles,
     iconBg: "bg-cyan-500/10",
-    iconColor: "text-cyan-400",
+    iconColor: "text-cyan-600 dark:text-cyan-400",
     border: "hover:border-cyan-500/40",
     glow: "bg-cyan-500/10",
     href: "/ai-tools/prompt-improver",
@@ -45,30 +43,29 @@ const aiTools = [
 
 const AIToolsPage = () => {
   return (
-    <div className="min-h-screen bg-[#050505] px-4 py-10 md:px-8 lg:px-12">
+    <div className="min-h-screen bg-white dark:bg-[#050505] px-4 py-10 md:px-8 lg:px-12 select-none">
       <div className="mx-auto max-w-6xl">
         {/* ==================== HERO ==================== */}
-        <div className="relative mb-14 overflow-hidden rounded-[32px] border border-white/5 bg-[#0a0a0a] px-6 py-12 text-center md:px-12 md:py-16">
+        <div className="relative mb-14 overflow-hidden rounded-[32px] border border-zinc-200 dark:border-white/5 bg-white dark:bg-[#0a0a0a] px-6 py-12 text-center md:px-12 md:py-16 shadow-sm dark:shadow-none">
           {/* Background Glow */}
           <div className="pointer-events-none absolute -left-20 -top-20 h-64 w-64 rounded-full bg-violet-600/10 blur-3xl" />
-
           <div className="pointer-events-none absolute -bottom-20 -right-20 h-64 w-64 rounded-full bg-cyan-500/10 blur-3xl" />
 
           {/* Icon */}
-          <div className="relative mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-2xl border border-violet-500/20 bg-violet-500/10 text-violet-400">
+          <div className="relative mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-2xl border border-violet-500/20 bg-violet-500/10 text-violet-600 dark:text-violet-400">
             <Sparkles size={30} />
           </div>
 
-          <p className="relative mb-3 text-sm font-bold uppercase tracking-[0.25em] text-violet-400">
+          <p className="relative mb-3 text-sm font-bold uppercase tracking-[0.25em] text-violet-600 dark:text-violet-400">
             AI Powered Tools
           </p>
 
-          <h1 className="relative text-4xl font-black tracking-tight text-white md:text-5xl lg:text-6xl">
+          <h1 className="relative text-4xl font-black tracking-tight text-zinc-900 dark:text-white md:text-5xl lg:text-6xl">
             Create Better With{" "}
-            <span className="text-violet-400">AI</span>
+            <span className="text-violet-600 dark:text-violet-400">AI</span>
           </h1>
 
-          <p className="relative mx-auto mt-5 max-w-2xl text-sm leading-7 text-zinc-500 md:text-base">
+          <p className="relative mx-auto mt-5 max-w-2xl text-sm leading-7 text-zinc-600 dark:text-zinc-400 md:text-base">
             Powerful AI tools designed to help you create, improve, and
             work smarter with prompts.
           </p>
@@ -77,14 +74,13 @@ const AIToolsPage = () => {
         {/* ==================== SECTION TITLE ==================== */}
         <div className="mb-7">
           <div className="flex items-center gap-3">
-            <Stars className="text-violet-400" size={22} />
-
-            <h2 className="text-2xl font-black text-white">
+            <Stars className="text-violet-600 dark:text-violet-400" size={22} />
+            <h2 className="text-2xl font-black text-zinc-900 dark:text-white">
               AI Tools
             </h2>
           </div>
 
-          <p className="mt-2 text-sm text-zinc-500">
+          <p className="mt-2 text-sm text-zinc-600 dark:text-zinc-400">
             Choose a tool and start creating.
           </p>
         </div>
@@ -96,7 +92,7 @@ const AIToolsPage = () => {
 
             const cardContent = (
               <Card
-                className={`group relative h-full overflow-hidden rounded-[28px] border border-white/5 bg-[#0a0a0a] p-7 shadow-none transition-all duration-300 ${
+                className={`group relative h-full overflow-hidden rounded-[28px] border border-zinc-200 dark:border-white/5 bg-white dark:bg-[#0a0a0a] p-7 shadow-sm dark:shadow-none transition-all duration-300 ${
                   tool.border
                 } ${
                   tool.available
@@ -122,8 +118,8 @@ const AIToolsPage = () => {
                   <span
                     className={`rounded-full border px-3 py-1.5 text-[11px] font-bold ${
                       tool.available
-                        ? "border-violet-500/20 bg-violet-500/10 text-violet-400"
-                        : "border-white/10 bg-white/5 text-zinc-500"
+                        ? "border-violet-500/20 bg-violet-500/10 text-violet-600 dark:text-violet-400"
+                        : "border-zinc-200 dark:border-white/10 bg-zinc-100 dark:bg-white/5 text-zinc-500"
                     }`}
                   >
                     {tool.badge}
@@ -132,22 +128,22 @@ const AIToolsPage = () => {
 
                 {/* Content */}
                 <div className="relative mt-7">
-                  <h3 className="text-xl font-bold text-white transition-colors group-hover:text-violet-400">
+                  <h3 className="text-xl font-bold text-zinc-900 dark:text-white transition-colors group-hover:text-violet-600 dark:group-hover:text-violet-400">
                     {tool.title}
                   </h3>
 
-                  <p className="mt-3 min-h-[56px] text-sm leading-6 text-zinc-500">
+                  <p className="mt-3 min-h-[56px] text-sm leading-6 text-zinc-600 dark:text-zinc-400">
                     {tool.description}
                   </p>
                 </div>
 
                 {/* Bottom */}
-                <div className="relative mt-7 flex items-center justify-between border-t border-white/5 pt-5">
+                <div className="relative mt-7 flex items-center justify-between border-t border-zinc-200 dark:border-white/5 pt-5">
                   <span
                     className={`text-sm font-bold ${
                       tool.available
-                        ? "text-white"
-                        : "text-zinc-600"
+                        ? "text-zinc-900 dark:text-white"
+                        : "text-zinc-400 dark:text-zinc-600"
                     }`}
                   >
                     {tool.available
@@ -156,7 +152,7 @@ const AIToolsPage = () => {
                   </span>
 
                   {tool.available && (
-                    <div className="flex h-9 w-9 items-center justify-center rounded-full bg-white/5 text-zinc-400 transition-all group-hover:bg-violet-500/10 group-hover:text-violet-400">
+                    <div className="flex h-9 w-9 items-center justify-center rounded-full bg-zinc-100 dark:bg-white/5 text-zinc-600 dark:text-zinc-400 transition-all group-hover:bg-violet-500/10 group-hover:text-violet-600 dark:group-hover:text-violet-400">
                       <ArrowRight size={17} />
                     </div>
                   )}
@@ -182,14 +178,6 @@ const AIToolsPage = () => {
               </div>
             );
           })}
-        </div>
-
-        {/* ==================== BOTTOM INFO ==================== */}
-        <div className="mt-10 rounded-[24px] border border-white/5 bg-[#0a0a0a] p-5 text-center">
-          <div className="flex items-center justify-center gap-2 text-sm text-zinc-500">
-            <Sparkles size={15} className="text-violet-400" />
-            More AI tools are coming soon.
-          </div>
         </div>
       </div>
     </div>
