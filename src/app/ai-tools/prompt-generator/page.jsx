@@ -21,6 +21,7 @@ const PromptGeneratorPage = () => {
   const [copied, setCopied] = useState(false);
   const [error, setError] = useState("");
 
+
   const handleGenerate = async () => {
     if (!idea.trim()) {
       setError("Please describe what kind of prompt you want to create.");
@@ -41,7 +42,6 @@ const PromptGeneratorPage = () => {
 
       setGeneratedPrompt(data.prompt || "");
     } catch (error) {
-      console.error("Prompt generation error:", error);
       setError(
         error.message || "Failed to generate prompt. Please try again."
       );
