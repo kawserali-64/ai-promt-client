@@ -13,12 +13,13 @@ import {
   CreditCard,
   AlertTriangle,
   Menu,
+  X,
 } from "lucide-react";
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useSession } from "@/lib/auth-client";
-import { Button, Drawer } from "@heroui/react";
+import { Button } from "@heroui/react";
 import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
 
@@ -28,10 +29,20 @@ const DashboardSidebar = () => {
   const { resolvedTheme } = useTheme();
 
   const [mounted, setMounted] = useState(false);
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
   useEffect(() => {
     setMounted(true);
   }, []);
+
+  // Prevent background scrolling when mobile sidebar is open
+  useEffect(() => {
+    if (isDrawerOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "unset";
+    }
+  }, [isDrawerOpen]);
 
   const isDark = mounted && resolvedTheme === "dark";
 
@@ -56,7 +67,6 @@ const DashboardSidebar = () => {
               isDark ? "bg-white/10" : "bg-zinc-200"
             }`}
           />
-
           <div
             className={`h-5 w-28 rounded-md animate-pulse ${
               isDark ? "bg-white/10" : "bg-zinc-200"
@@ -174,9 +184,7 @@ const DashboardSidebar = () => {
     ? "bg-[#050505] text-white border-white/5"
     : "bg-white text-zinc-900 border-zinc-200";
 
-  const desktopLogoClass = isDark
-    ? "!text-white"
-    : "!text-violet-600";
+  const desktopLogoClass = isDark ? "!text-white" : "!text-violet-600";
 
   const getDesktopItemClass = (isActive) => {
     if (isActive) {
@@ -190,27 +198,26 @@ const DashboardSidebar = () => {
       : "text-zinc-600 hover:text-zinc-900 hover:bg-zinc-100";
   };
 
-  const desktopBorderClass = isDark
-    ? "border-white/5"
-    : "border-zinc-200";
+  const desktopBorderClass = isDark ? "border-white/5" : "border-zinc-200";
 
   const desktopBackLinkClass = isDark
     ? "text-zinc-400 hover:text-white"
     : "text-zinc-600 hover:text-zinc-900";
 
-  const NavContent = () => (
+  const NavContent = ({ onLinkClick, isMobile }) => (
     <div
       className={`flex flex-col h-full ${
         isDark ? "bg-[#050505]" : "bg-white"
       }`}
     >
       <div
-        className={`p-6 border-b ${
+        className={`p-6 border-b flex items-center justify-between ${
           isDark ? "border-white/5" : "border-zinc-200"
         }`}
       >
         <Link
           href="/"
+          onClick={onLinkClick}
           className={`text-xl font-bold flex items-center gap-2 ${
             isDark ? "!text-white" : "!text-violet-600"
           }`}
@@ -220,6 +227,16 @@ const DashboardSidebar = () => {
           </span>
           AI Prompts
         </Link>
+
+        {/* Close Button only for mobile */}
+        {isMobile && (
+          <button
+            onClick={onLinkClick}
+            className="rounded-lg p-2 text-zinc-500 hover:bg-zinc-100 dark:text-zinc-400 dark:hover:bg-white/10 transition-colors"
+          >
+            <X className="h-5 w-5" />
+          </button>
+        )}
       </div>
 
       <div className="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
@@ -230,6 +247,7 @@ const DashboardSidebar = () => {
             <Link
               key={item.label}
               href={item.href}
+              onClick={onLinkClick}
               className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all ${getDesktopItemClass(
                 isActive
               )}`}
@@ -248,6 +266,7 @@ const DashboardSidebar = () => {
       >
         <Link
           href="/"
+          onClick={onLinkClick}
           className={`flex items-center gap-3 px-4 py-3 text-sm font-medium transition-colors ${desktopBackLinkClass}`}
         >
           <LogOut className="size-5 rotate-180" />
@@ -263,92 +282,40 @@ const DashboardSidebar = () => {
       <aside
         className={`hidden lg:flex flex-col w-64 h-screen overflow-y-auto shrink-0 border-r transition-colors duration-300 ${desktopSidebarClass}`}
       >
-        <div className={`p-6 border-b ${desktopBorderClass}`}>
-          <Link
-            href="/"
-            className={`text-xl font-bold flex items-center gap-2 ${desktopLogoClass}`}
-          >
-            <span className="bg-gradient-to-tr from-violet-600 to-indigo-500 p-1.5 rounded-lg text-white">
-              AI
-            </span>
-            AI Prompts
-          </Link>
-        </div>
-
-        <div className="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
-          {menuItems.map((item) => {
-            const isActive = pathname === item.href;
-
-            return (
-              <Link
-                key={item.label}
-                href={item.href}
-                className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all ${getDesktopItemClass(
-                  isActive
-                )}`}
-              >
-                <item.icon className="size-5" />
-                {item.label}
-              </Link>
-            );
-          })}
-        </div>
-
-        <div className={`p-4 border-t ${desktopBorderClass}`}>
-          <Link
-            href="/"
-            className={`flex items-center gap-3 px-4 py-3 text-sm font-medium transition-colors ${desktopBackLinkClass}`}
-          >
-            <LogOut className="size-5 rotate-180" />
-            Back to Home
-          </Link>
-        </div>
+        <NavContent />
       </aside>
 
-      {/* Mobile Drawer */}
-      <Drawer>
-        <Button
-          className="lg:hidden fixed top-24 right-0 z-50 shadow-lg rounded-l-xl rounded-r-none border-y border-l border-zinc-200 bg-white/90 backdrop-blur-md text-zinc-900 dark:bg-[#18181b]/90 dark:text-white dark:border-white/10 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-all"
-          variant="flat"
-          isIconOnly
-        >
-          <Menu className="size-5" />
-        </Button>
+      {/* Mobile Menu Button */}
+     {/* Mobile Menu Button */}
+      <Button
+        onClick={() => setIsDrawerOpen(true)}
+        className="lg:hidden fixed top-24 right-0 z-40 shadow-xl rounded-l-2xl rounded-r-none border-y border-l transition-all p-3"
+        style={{
+          backgroundColor: resolvedTheme === "dark" ? "#18181b" : "#ffffff",
+          color: resolvedTheme === "dark" ? "#ffffff" : "#18181b",
+          borderColor: resolvedTheme === "dark" ? "#3f3f46" : "#cbd5e1",
+        }}
+        isIconOnly
+      >
+        <Menu className="size-6" />
+      </Button>
 
-        <Drawer.Backdrop>
-          <Drawer.Content placement="right">
-            <Drawer.Dialog
-              className={
-                isDark
-                  ? "bg-[#09090b] text-white"
-                  : "bg-white text-zinc-900"
-              }
-            >
-              <Drawer.Header
-                className={
-                  isDark
-                    ? "border-b border-white/5"
-                    : "border-b border-zinc-200"
-                }
-              >
-                <Drawer.Heading
-                  className={
-                    isDark ? "text-white" : "text-zinc-900"
-                  }
-                >
-                  Menu
-                </Drawer.Heading>
+      {/* Mobile Sidebar Overlay */}
+      <div
+        className={`fixed inset-0 z-50 bg-black/60 backdrop-blur-sm transition-opacity duration-300 lg:hidden ${
+          isDrawerOpen ? "opacity-100" : "opacity-0 pointer-events-none"
+        }`}
+        onClick={() => setIsDrawerOpen(false)}
+      />
 
-                <Drawer.CloseTrigger />
-              </Drawer.Header>
-
-              <Drawer.Body className="p-0">
-                <NavContent />
-              </Drawer.Body>
-            </Drawer.Dialog>
-          </Drawer.Content>
-        </Drawer.Backdrop>
-      </Drawer>
+      {/* Mobile Sidebar (Slide from Right) */}
+      <div
+        className={`fixed inset-y-0 right-0 z-[60] w-[280px] max-w-[80vw] transform transition-transform duration-300 ease-in-out lg:hidden shadow-2xl ${
+          isDrawerOpen ? "translate-x-0" : "translate-x-full"
+        }`}
+      >
+        <NavContent onLinkClick={() => setIsDrawerOpen(false)} isMobile={true} />
+      </div>
     </>
   );
 };
